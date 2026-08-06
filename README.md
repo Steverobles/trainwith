@@ -5,9 +5,9 @@ drill, and skill level — long toss, bullpen sessions, shooting reps, baseline 
 training is easier to stick with and more fun to show up for.
 
 Profiles and matching are backed by a real Supabase (Postgres) database with real accounts — sign
-up creates an account and a profile tied to it, and you can send a training request to another
-athlete that they can accept or decline. Guardian contact info for minors is write-only (see
-below).
+up creates an account and a profile tied to it, you can send a training request to another
+athlete that they can accept or decline, and once accepted you can message each other. Guardian
+contact info for minors is write-only (see below).
 
 ## Requirements
 
@@ -23,9 +23,10 @@ below).
    npm install
    ```
 
-2. Create a Supabase project, then run [`supabase-schema.sql`](./supabase-schema.sql) followed by
-   [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql) in its **SQL Editor** to create the
-   tables, row-level security policies, and seed demo profiles.
+2. Create a Supabase project, then run [`supabase-schema.sql`](./supabase-schema.sql),
+   [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql), and
+   [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql) in order in its **SQL
+   Editor** to create the tables, row-level security policies, and seed demo profiles.
 
    For faster local testing, also turn off **Confirm email** under
    **Authentication → Providers → Email** so new signups don't need to click an email link.
@@ -54,6 +55,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
   during signup for minors.
 - `training_requests` — visible only to the sender and recipient; only the profile owner can send
   a request from their own profile, and only the recipient can accept or decline it.
+- `messages` — visible only to the two participants on an *accepted* request; messaging is
+  blocked entirely (by RLS, not just the UI) until a request reaches that state.
 
 ## Scripts
 
@@ -67,10 +70,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Project structure
 
 - `src/app/` — pages: landing (`/`), browse/matching (`/browse`), profile detail
-  (`/profile/[id]`), signup (`/signup`), login (`/login`), requests inbox (`/requests`)
+  (`/profile/[id]`), signup (`/signup`), login (`/login`), requests inbox (`/requests`), chat
+  thread (`/messages/[id]`)
 - `src/components/` — shared UI (header, profile cards, filters, signup/login forms, request
   button, safety banner)
-- `src/lib/` — types, Supabase client, auth session hook, and profile/request queries
+- `src/lib/` — types, Supabase client, auth session hook, and profile/request/message queries
 
 ## Stack
 

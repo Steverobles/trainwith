@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/lib/auth";
 import { getMyProfile } from "@/lib/profiles";
-import { getRequestBetween, sendTrainingRequest, RequestStatus } from "@/lib/requests";
+import { getRequestBetween, sendTrainingRequest, RequestListItem } from "@/lib/requests";
 
 const buttonClass =
   "mt-6 w-full rounded-full px-5 py-3 text-center text-sm font-semibold shadow-sm transition-transform";
@@ -18,7 +18,7 @@ export default function RequestButton({
 }) {
   const { session, loading: sessionLoading } = useSession();
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
-  const [status, setStatus] = useState<RequestStatus | null>(null);
+  const [existing, setExisting] = useState<RequestListItem | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,14 +31,15 @@ export default function RequestButton({
       setMyProfileId(profile?.id ?? null);
 
       if (profile && profile.id !== toProfileId) {
-        const existing = await getRequestBetween(profile.id, toProfileId);
-        setStatus(existing?.status ?? null);
+        const request = await getRequestBetween(profile.id, toProfileId);
+        setExisting(request);
       }
       setProfileLoading(false);
     })();
   }, [session, sessionLoading, toProfileId]);
 
   const ready = !sessionLoading && (!session || !profileLoading);
+  const status = existing?.status ?? null;
 
   async function onRequest() {
     if (!myProfileId) return;
@@ -46,7 +47,13 @@ export default function RequestButton({
     setError(null);
     try {
       await sendTrainingRequest(myProfileId, toProfileId);
-      setStatus("pending");
+      setExisting({
+        id: "",
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        direction: "outgoing",
+        counterpartProfileId: toProfileId,
+      });
     } catch {
       setError("Couldn't send that request. Please try again.");
     } finally {
@@ -79,8 +86,15 @@ export default function RequestButton({
   if (status === "pending") {
     return <p className={`${buttonClass} cursor-default bg-amber-50 text-amber-700`}>Request sent</p>;
   }
-  if (status === "accepted") {
-    return <p className={`${buttonClass} cursor-default bg-emerald-50 text-emerald-700`}>✓ Connected</p>;
+  if (status === "accepted" && existing) {
+    return (
+      <Link
+        href={`/messages/${existing.id}`}
+        className={`${buttonClass} block bg-emerald-600 text-white hover:bg-emerald-700`}
+      >
+        ✓ Connected — Message
+      </Link>
+    );
   }
   if (status === "declined") {
     return <p className={`${buttonClass} cursor-default bg-gray-100 text-gray-500`}>Request declined</p>;

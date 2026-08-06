@@ -164,17 +164,20 @@ function RequestRow({
             Decline
           </button>
         </div>
+      ) : request.status === "accepted" ? (
+        <Link
+          href={`/messages/${request.id}`}
+          className="shrink-0 rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+        >
+          Message
+        </Link>
       ) : (
         <span
           className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
-            request.status === "accepted"
-              ? "bg-emerald-50 text-emerald-700"
-              : request.status === "declined"
-                ? "bg-gray-100 text-gray-500"
-                : "bg-amber-50 text-amber-700"
+            request.status === "declined" ? "bg-gray-100 text-gray-500" : "bg-amber-50 text-amber-700"
           }`}
         >
-          {request.status === "accepted" ? "✓ Connected" : request.status === "declined" ? "Declined" : "Pending"}
+          {request.status === "declined" ? "Declined" : "Pending"}
         </span>
       )}
     </div>

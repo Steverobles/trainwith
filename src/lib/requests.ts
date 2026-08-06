@@ -23,14 +23,15 @@ export async function respondToRequest(requestId: string, status: "accepted" | "
 }
 
 export async function getRequestBetween(
-  fromProfileId: string,
-  toProfileId: string
+  myProfileId: string,
+  otherProfileId: string
 ): Promise<RequestListItem | null> {
   const { data, error } = await supabase
     .from("training_requests")
     .select("id, status, created_at, from_profile_id, to_profile_id")
-    .eq("from_profile_id", fromProfileId)
-    .eq("to_profile_id", toProfileId)
+    .or(
+      `and(from_profile_id.eq.${myProfileId},to_profile_id.eq.${otherProfileId}),and(from_profile_id.eq.${otherProfileId},to_profile_id.eq.${myProfileId})`
+    )
     .maybeSingle();
 
   if (error) throw error;
@@ -40,8 +41,33 @@ export async function getRequestBetween(
     id: data.id,
     status: data.status as RequestStatus,
     createdAt: data.created_at,
-    direction: "outgoing",
-    counterpartProfileId: data.to_profile_id,
+    direction: data.from_profile_id === myProfileId ? "outgoing" : "incoming",
+    counterpartProfileId: data.from_profile_id === myProfileId ? data.to_profile_id : data.from_profile_id,
+  };
+}
+
+export interface RequestDetail {
+  id: string;
+  status: RequestStatus;
+  fromProfileId: string;
+  toProfileId: string;
+}
+
+export async function getRequestById(id: string): Promise<RequestDetail | null> {
+  const { data, error } = await supabase
+    .from("training_requests")
+    .select("id, status, from_profile_id, to_profile_id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  return {
+    id: data.id,
+    status: data.status as RequestStatus,
+    fromProfileId: data.from_profile_id,
+    toProfileId: data.to_profile_id,
   };
 }
 
