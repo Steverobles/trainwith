@@ -1,12 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth";
+import { getMyProfile } from "@/lib/profiles";
+import { countPendingIncoming } from "@/lib/requests";
 
 export default function Header() {
   const { session, loading } = useSession();
   const router = useRouter();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (loading || !session) return;
+
+    (async () => {
+      const profile = await getMyProfile();
+      if (!profile) return;
+      const count = await countPendingIncoming(profile.id);
+      setPendingCount(count);
+    })();
+  }, [session, loading]);
 
   async function handleSignOut() {
     await signOut();
@@ -32,8 +47,13 @@ export default function Header() {
 
           {loading ? null : session ? (
             <>
-              <Link href="/requests" className="transition-colors hover:text-gray-950">
+              <Link href="/requests" className="relative flex items-center gap-1.5 transition-colors hover:text-gray-950">
                 Requests
+                {pendingCount > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                    {pendingCount}
+                  </span>
+                )}
               </Link>
               <button
                 onClick={handleSignOut}

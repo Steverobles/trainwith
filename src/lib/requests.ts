@@ -45,6 +45,17 @@ export async function getRequestBetween(
   };
 }
 
+export async function countPendingIncoming(myProfileId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from("training_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("to_profile_id", myProfileId)
+    .eq("status", "pending");
+
+  if (error) throw error;
+  return count ?? 0;
+}
+
 export async function listMyRequests(myProfileId: string): Promise<RequestListItem[]> {
   const { data, error } = await supabase
     .from("training_requests")
