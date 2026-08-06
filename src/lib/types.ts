@@ -22,7 +22,6 @@ export interface Profile {
   skillLevel: SkillLevel;
   city: string;
   state: string;
-  distanceMiles: number;
   bio: string;
   initials: string;
   guardianVerified?: boolean; // only meaningful for minor age bands

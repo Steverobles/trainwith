@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import SafetyBanner from "@/components/SafetyBanner";
-import { mockProfiles } from "@/lib/mock-profiles";
+import { getProfile } from "@/lib/profiles";
 import { isMinorAgeBand } from "@/lib/types";
 import { sportStyles } from "@/lib/sport-style";
 
@@ -12,7 +12,7 @@ export default async function ProfileDetail({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const profile = mockProfiles.find((p) => p.id === id);
+  const profile = await getProfile(id);
   if (!profile) notFound();
 
   const minor = isMinorAgeBand(profile.ageBand);
@@ -47,8 +47,7 @@ export default async function ProfileDetail({
               <div className="min-w-0 flex-1">
                 <h1 className="text-xl font-bold tracking-tight text-gray-950">{profile.name}</h1>
                 <p className="text-sm text-gray-500">
-                  Age {profile.ageBand} · {profile.city}, {profile.state} ·{" "}
-                  {profile.distanceMiles} mi away
+                  Age {profile.ageBand} · {profile.city}, {profile.state}
                 </p>
                 {minor && (
                   <p className="mt-1 text-xs font-medium text-amber-700">

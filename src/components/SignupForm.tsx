@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AgeBand, Sport, SkillLevel, isMinorAgeBand } from "@/lib/types";
+import { createProfile } from "@/lib/profiles";
 
 const ageBands: AgeBand[] = ["13-15", "16-17", "18-24", "25-34", "35+"];
 const sports: Sport[] = [
@@ -26,15 +27,37 @@ export default function SignupForm() {
   const [focus, setFocus] = useState("");
   const [skillLevel, setSkillLevel] = useState<SkillLevel>("Rec / casual");
   const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [guardianName, setGuardianName] = useState("");
   const [guardianEmail, setGuardianEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const minor = isMinorAgeBand(ageBand);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setError(null);
+    try {
+      await createProfile({
+        name,
+        ageBand,
+        sport,
+        focus,
+        skillLevel,
+        city,
+        state,
+        guardianName: minor ? guardianName : undefined,
+        guardianEmail: minor ? guardianEmail : undefined,
+      });
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong saving your profile. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -134,15 +157,28 @@ export default function SignupForm() {
             ))}
           </select>
         </div>
-        <div>
-          <label className={labelClass}>City</label>
-          <input
-            required
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className={inputClass}
-            placeholder="Round Rock, TX"
-          />
+        <div className="grid grid-cols-3 gap-2">
+          <div className="col-span-2">
+            <label className={labelClass}>City</label>
+            <input
+              required
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className={inputClass}
+              placeholder="Round Rock"
+            />
+          </div>
+          <div>
+            <label className={labelClass}>State</label>
+            <input
+              required
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              className={inputClass}
+              placeholder="TX"
+              maxLength={2}
+            />
+          </div>
         </div>
       </div>
 
@@ -177,11 +213,14 @@ export default function SignupForm() {
         </div>
       )}
 
+      {error && <p className="text-sm font-medium text-red-600">{error}</p>}
+
       <button
         type="submit"
-        className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg"
+        disabled={submitting}
+        className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
       >
-        Create profile
+        {submitting ? "Creating profile…" : "Create profile"}
       </button>
     </form>
   );

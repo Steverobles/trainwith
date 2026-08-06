@@ -3,8 +3,8 @@ import Header from "@/components/Header";
 import BrowseFilters from "@/components/BrowseFilters";
 import ProfileCard from "@/components/ProfileCard";
 import SafetyBanner from "@/components/SafetyBanner";
-import { mockProfiles } from "@/lib/mock-profiles";
-import { isMinorAgeBand, Sport } from "@/lib/types";
+import { listProfiles } from "@/lib/profiles";
+import { Sport } from "@/lib/types";
 
 export default async function Browse({
   searchParams,
@@ -15,14 +15,7 @@ export default async function Browse({
   const sport = sp.sport as Sport | undefined;
   const pool = sp.pool;
 
-  const results = mockProfiles
-    .filter((p) => (sport ? p.sport === sport : true))
-    .filter((p) => {
-      if (pool === "teen") return isMinorAgeBand(p.ageBand);
-      if (pool === "adult") return !isMinorAgeBand(p.ageBand);
-      return true;
-    })
-    .sort((a, b) => a.distanceMiles - b.distanceMiles);
+  const results = await listProfiles({ sport, pool });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,7 +27,7 @@ export default async function Browse({
             Training partners near you
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            Showing sample profiles around Austin, TX. Filter by sport or age group.
+            Browse athletes looking for a training partner. Filter by sport or age group.
           </p>
         </div>
 
