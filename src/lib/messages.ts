@@ -58,3 +58,25 @@ export async function countUnreadMessages(myProfileId: string, acceptedRequestId
   if (error) throw error;
   return count ?? 0;
 }
+
+export async function listUnreadByRequest(
+  myProfileId: string,
+  acceptedRequestIds: string[]
+): Promise<Record<string, number>> {
+  if (acceptedRequestIds.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from("messages")
+    .select("request_id")
+    .in("request_id", acceptedRequestIds)
+    .neq("sender_profile_id", myProfileId)
+    .is("read_at", null);
+
+  if (error) throw error;
+
+  const counts: Record<string, number> = {};
+  for (const row of data ?? []) {
+    counts[row.request_id] = (counts[row.request_id] ?? 0) + 1;
+  }
+  return counts;
+}

@@ -6,8 +6,9 @@ training is easier to stick with and more fun to show up for.
 
 Profiles and matching are backed by a real Supabase (Postgres) database with real accounts — sign
 up creates an account and a profile tied to it, you can send a training request to another
-athlete that they can accept or decline, and once accepted you can message each other. Guardian
-contact info for minors is write-only (see below).
+athlete, and once they accept it becomes a conversation on the Messages tab. Requests and
+Messages are deliberately separate: Requests is just the pending accept/decline inbox, Messages is
+where your actual connections live. Guardian contact info for minors is write-only (see below).
 
 ## Requirements
 
@@ -74,7 +75,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 - `src/app/` — pages: landing (`/`), browse/matching (`/browse`), profile detail
   (`/profile/[id]`), your own profile redirect (`/profile/me`), signup (`/signup`), login
-  (`/login`), requests inbox (`/requests`), chat thread (`/messages/[id]`)
+  (`/login`), pending requests inbox (`/requests`), conversation list (`/messages`), chat thread
+  (`/messages/[id]`)
 - `src/components/` — shared UI (header, profile grid/cards, filters, signup/login forms, request
   button, safety banner)
 - `src/lib/` — types, Supabase client, auth session hook, and profile/request/message queries

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
@@ -15,6 +16,7 @@ interface EnrichedRequest extends RequestListItem {
 
 export default function Requests() {
   const { session, loading: sessionLoading } = useSession();
+  const router = useRouter();
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
   const [requests, setRequests] = useState<EnrichedRequest[]>([]);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -41,18 +43,30 @@ export default function Requests() {
     })();
   }, [session, sessionLoading]);
 
-  async function onRespond(requestId: string, status: "accepted" | "declined") {
+  async function onAccept(requestId: string) {
     setRespondingId(requestId);
     try {
-      await respondToRequest(requestId, status);
-      setRequests((prev) => prev.map((r) => (r.id === requestId ? { ...r, status } : r)));
+      await respondToRequest(requestId, "accepted");
+      router.push(`/messages/${requestId}`);
     } finally {
       setRespondingId(null);
     }
   }
 
-  const incoming = requests.filter((r) => r.direction === "incoming");
-  const outgoing = requests.filter((r) => r.direction === "outgoing");
+  async function onDecline(requestId: string) {
+    setRespondingId(requestId);
+    try {
+      await respondToRequest(requestId, "declined");
+      setRequests((prev) => prev.map((r) => (r.id === requestId ? { ...r, status: "declined" } : r)));
+    } finally {
+      setRespondingId(null);
+    }
+  }
+
+  // Accepted requests become conversations and live on the Messages tab instead.
+  const visible = requests.filter((r) => r.status !== "accepted");
+  const incoming = visible.filter((r) => r.direction === "incoming");
+  const outgoing = visible.filter((r) => r.direction === "outgoing");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -60,6 +74,13 @@ export default function Requests() {
 
       <main className="mx-auto max-w-2xl px-4 py-8">
         <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">Requests</h1>
+        <p className="mt-1 text-sm text-gray-600">
+          Accepted requests move to{" "}
+          <Link href="/messages" className="font-medium text-blue-600 hover:underline">
+            Messages
+          </Link>
+          .
+        </p>
 
         {!sessionLoading && !session && (
           <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 text-sm text-gray-600 shadow-sm">
@@ -88,8 +109,8 @@ export default function Requests() {
                   <RequestRow
                     key={r.id}
                     request={r}
-                    onAccept={() => onRespond(r.id, "accepted")}
-                    onDecline={() => onRespond(r.id, "declined")}
+                    onAccept={() => onAccept(r.id)}
+                    onDecline={() => onDecline(r.id)}
                     responding={respondingId === r.id}
                   />
                 ))}
@@ -164,19 +185,8 @@ function RequestRow({
             Decline
           </button>
         </div>
-      ) : request.status === "accepted" ? (
-        <Link
-          href={`/messages/${request.id}`}
-          className="shrink-0 rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
-        >
-          Message
-        </Link>
       ) : (
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
-            request.status === "declined" ? "bg-gray-100 text-gray-500" : "bg-amber-50 text-amber-700"
-          }`}
-        >
+        <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
           {request.status === "declined" ? "Declined" : "Pending"}
         </span>
       )}

@@ -8,10 +8,20 @@ import { getMyProfile } from "@/lib/profiles";
 import { countPendingIncoming, listMyRequests } from "@/lib/requests";
 import { countUnreadMessages } from "@/lib/messages";
 
+function NavBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+      {count}
+    </span>
+  );
+}
+
 export default function Header() {
   const { session, loading } = useSession();
   const router = useRouter();
-  const [alertCount, setAlertCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (loading || !session) return;
@@ -27,7 +37,8 @@ export default function Header() {
       const acceptedIds = allRequests.filter((r) => r.status === "accepted").map((r) => r.id);
       const unread = await countUnreadMessages(profile.id, acceptedIds);
 
-      setAlertCount(pending + unread);
+      setPendingCount(pending);
+      setUnreadCount(unread);
     })();
   }, [session, loading]);
 
@@ -60,11 +71,11 @@ export default function Header() {
               </Link>
               <Link href="/requests" className="relative flex items-center gap-1.5 transition-colors hover:text-gray-950">
                 Requests
-                {alertCount > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
-                    {alertCount}
-                  </span>
-                )}
+                <NavBadge count={pendingCount} />
+              </Link>
+              <Link href="/messages" className="relative flex items-center gap-1.5 transition-colors hover:text-gray-950">
+                Messages
+                <NavBadge count={unreadCount} />
               </Link>
               <button
                 onClick={handleSignOut}
