@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Header from "@/components/Header";
 import BrowseFilters from "@/components/BrowseFilters";
-import ProfileCard from "@/components/ProfileCard";
+import ProfileGrid from "@/components/ProfileGrid";
 import SafetyBanner from "@/components/SafetyBanner";
 import { listProfiles } from "@/lib/profiles";
 import { Sport } from "@/lib/types";
@@ -35,10 +35,8 @@ export default async function Browse({
           <BrowseFilters />
         </Suspense>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {results.map((p) => (
-            <ProfileCard key={p.id} profile={p} />
-          ))}
+        <div className="mt-6">
+          <ProfileGrid profiles={results} />
         </div>
 
         {results.length === 0 && (

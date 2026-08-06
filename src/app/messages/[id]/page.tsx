@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { getRequestById } from "@/lib/requests";
-import { listMessages, sendMessage, Message } from "@/lib/messages";
+import { listMessages, sendMessage, markMessagesRead, Message } from "@/lib/messages";
 import { Profile } from "@/lib/types";
 import { sportStyles } from "@/lib/sport-style";
 
@@ -58,6 +58,7 @@ export default function MessageThread() {
       if (cancelled) return;
       setMessages(msgs);
       setReady(true);
+      markMessagesRead(id, profile.id);
     })();
 
     return () => {
@@ -66,14 +67,17 @@ export default function MessageThread() {
   }, [session, sessionLoading, id]);
 
   useEffect(() => {
-    if (!ready || notAllowed) return;
+    if (!ready || notAllowed || !myProfileId) return;
 
     const interval = setInterval(() => {
-      listMessages(id).then(setMessages);
+      listMessages(id).then((msgs) => {
+        setMessages(msgs);
+        markMessagesRead(id, myProfileId);
+      });
     }, POLL_MS);
 
     return () => clearInterval(interval);
-  }, [ready, notAllowed, id]);
+  }, [ready, notAllowed, id, myProfileId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

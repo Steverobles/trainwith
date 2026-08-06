@@ -34,3 +34,27 @@ export async function sendMessage(requestId: string, senderProfileId: string, bo
   });
   if (error) throw error;
 }
+
+export async function markMessagesRead(requestId: string, myProfileId: string): Promise<void> {
+  const { error } = await supabase
+    .from("messages")
+    .update({ read_at: new Date().toISOString() })
+    .eq("request_id", requestId)
+    .neq("sender_profile_id", myProfileId)
+    .is("read_at", null);
+  if (error) throw error;
+}
+
+export async function countUnreadMessages(myProfileId: string, acceptedRequestIds: string[]): Promise<number> {
+  if (acceptedRequestIds.length === 0) return 0;
+
+  const { count, error } = await supabase
+    .from("messages")
+    .select("id", { count: "exact", head: true })
+    .in("request_id", acceptedRequestIds)
+    .neq("sender_profile_id", myProfileId)
+    .is("read_at", null);
+
+  if (error) throw error;
+  return count ?? 0;
+}

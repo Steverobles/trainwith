@@ -24,9 +24,10 @@ contact info for minors is write-only (see below).
    ```
 
 2. Create a Supabase project, then run [`supabase-schema.sql`](./supabase-schema.sql),
-   [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql), and
-   [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql) in order in its **SQL
-   Editor** to create the tables, row-level security policies, and seed demo profiles.
+   [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql),
+   [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql), and
+   [`supabase-schema-4-message-reads.sql`](./supabase-schema-4-message-reads.sql) in order in its
+   **SQL Editor** to create the tables, row-level security policies, and seed demo profiles.
 
    For faster local testing, also turn off **Confirm email** under
    **Authentication → Providers → Email** so new signups don't need to click an email link.
@@ -56,7 +57,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - `training_requests` — visible only to the sender and recipient; only the profile owner can send
   a request from their own profile, and only the recipient can accept or decline it.
 - `messages` — visible only to the two participants on an *accepted* request; messaging is
-  blocked entirely (by RLS, not just the UI) until a request reaches that state.
+  blocked entirely (by RLS, not just the UI) until a request reaches that state. Each message has
+  a `read_at` that only the recipient (never the sender) can set, which drives the unread badge
+  in the header.
 
 ## Scripts
 
@@ -70,9 +73,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Project structure
 
 - `src/app/` — pages: landing (`/`), browse/matching (`/browse`), profile detail
-  (`/profile/[id]`), signup (`/signup`), login (`/login`), requests inbox (`/requests`), chat
-  thread (`/messages/[id]`)
-- `src/components/` — shared UI (header, profile cards, filters, signup/login forms, request
+  (`/profile/[id]`), your own profile redirect (`/profile/me`), signup (`/signup`), login
+  (`/login`), requests inbox (`/requests`), chat thread (`/messages/[id]`)
+- `src/components/` — shared UI (header, profile grid/cards, filters, signup/login forms, request
   button, safety banner)
 - `src/lib/` — types, Supabase client, auth session hook, and profile/request/message queries
 
