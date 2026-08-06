@@ -14,10 +14,15 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
       <div className={`h-1.5 w-full bg-gradient-to-r ${style.accent}`} />
       <div className="p-4">
         <div className="flex items-start gap-3">
-          <div
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
-          >
-            {profile.initials}
+          <div className="relative shrink-0">
+            <div
+              className={`flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
+            >
+              {profile.initials}
+            </div>
+            <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-white text-[11px] shadow-sm">
+              {style.icon}
+            </span>
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
@@ -35,7 +40,8 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
         </div>
 
         <div className="mt-3 flex flex-wrap gap-1.5">
-          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+            <span>{style.icon}</span>
             {profile.sport}
           </span>
           <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">

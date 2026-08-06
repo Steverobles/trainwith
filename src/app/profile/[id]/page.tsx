@@ -34,10 +34,15 @@ export default async function ProfileDetail({
           <div className={`h-2 w-full bg-gradient-to-r ${style.accent}`} />
           <div className="p-6">
             <div className="flex items-start gap-4">
-              <div
-                className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-lg font-semibold ${style.avatar}`}
-              >
-                {profile.initials}
+              <div className="relative shrink-0">
+                <div
+                  className={`flex h-16 w-16 items-center justify-center rounded-full text-lg font-semibold ${style.avatar}`}
+                >
+                  {profile.initials}
+                </div>
+                <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-xs shadow-sm">
+                  {style.icon}
+                </span>
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-xl font-bold tracking-tight text-gray-950">{profile.name}</h1>
@@ -56,7 +61,8 @@ export default async function ProfileDetail({
             </div>
 
             <div className="mt-4 flex flex-wrap gap-1.5">
-              <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+              <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+                <span>{style.icon}</span>
                 {profile.sport}
               </span>
               <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
