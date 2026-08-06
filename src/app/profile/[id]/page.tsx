@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import SafetyBanner from "@/components/SafetyBanner";
+import RequestButton from "@/components/RequestButton";
 import { getProfile } from "@/lib/profiles";
 import { isMinorAgeBand } from "@/lib/types";
 import { sportStyles } from "@/lib/sport-style";
@@ -74,12 +75,7 @@ export default async function ProfileDetail({
 
             <p className="mt-4 text-sm leading-relaxed text-gray-700">{profile.bio}</p>
 
-            <button
-              type="button"
-              className="mt-6 w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              Request to train together
-            </button>
+            <RequestButton toProfileId={profile.id} toProfileHasOwner={profile.userId !== null} />
           </div>
         </div>
 

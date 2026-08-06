@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AgeBand, Sport, SkillLevel, isMinorAgeBand } from "@/lib/types";
-import { createProfile } from "@/lib/profiles";
+import { signUpAndCreateProfile } from "@/lib/profiles";
 
 const ageBands: AgeBand[] = ["13-15", "16-17", "18-24", "25-34", "35+"];
 const sports: Sport[] = [
@@ -21,6 +21,8 @@ const inputClass =
 const labelClass = "block text-sm font-medium text-gray-700";
 
 export default function SignupForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [ageBand, setAgeBand] = useState<AgeBand>("16-17");
   const [sport, setSport] = useState<Sport>("Baseball");
@@ -41,7 +43,9 @@ export default function SignupForm() {
     setSubmitting(true);
     setError(null);
     try {
-      await createProfile({
+      await signUpAndCreateProfile({
+        email,
+        password,
         name,
         ageBand,
         sport,
@@ -53,8 +57,8 @@ export default function SignupForm() {
         guardianEmail: minor ? guardianEmail : undefined,
       });
       setSubmitted(true);
-    } catch {
-      setError("Something went wrong saving your profile. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -89,6 +93,30 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className={labelClass}>Email</label>
+          <input
+            required
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Password</label>
+          <input
+            required
+            type="password"
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+      </div>
+
       <div>
         <label className={labelClass}>Your name</label>
         <input

@@ -25,4 +25,5 @@ export interface Profile {
   bio: string;
   initials: string;
   guardianVerified?: boolean; // only meaningful for minor age bands
+  userId: string | null; // null for unclaimed seed/demo profiles
 }

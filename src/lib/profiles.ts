@@ -1,6 +1,9 @@
 import { supabase } from "./supabase";
 import { AgeBand, Profile, Sport } from "./types";
 
+const SELECT_COLUMNS =
+  "id, name, age_band, sport, focus, skill_level, city, state, bio, guardian_verified, user_id";
+
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
   const first = parts[0]?.[0] ?? "";
@@ -19,6 +22,7 @@ interface ProfileRow {
   state: string;
   bio: string;
   guardian_verified: boolean;
+  user_id: string | null;
 }
 
 function rowToProfile(row: ProfileRow): Profile {
@@ -34,14 +38,12 @@ function rowToProfile(row: ProfileRow): Profile {
     bio: row.bio,
     initials: getInitials(row.name),
     guardianVerified: row.guardian_verified,
+    userId: row.user_id,
   };
 }
 
 export async function listProfiles(filters: { sport?: Sport; pool?: string }): Promise<Profile[]> {
-  let query = supabase
-    .from("profiles")
-    .select("id, name, age_band, sport, focus, skill_level, city, state, bio, guardian_verified")
-    .order("created_at", { ascending: false });
+  let query = supabase.from("profiles").select(SELECT_COLUMNS).order("created_at", { ascending: false });
 
   if (filters.sport) {
     query = query.eq("sport", filters.sport);
@@ -60,7 +62,7 @@ export async function listProfiles(filters: { sport?: Sport; pool?: string }): P
 export async function getProfile(id: string): Promise<Profile | null> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, name, age_band, sport, focus, skill_level, city, state, bio, guardian_verified")
+    .select(SELECT_COLUMNS)
     .eq("id", id)
     .maybeSingle();
 
@@ -68,7 +70,32 @@ export async function getProfile(id: string): Promise<Profile | null> {
   return data ? rowToProfile(data) : null;
 }
 
-export async function createProfile(input: {
+export async function getProfilesByIds(ids: string[]): Promise<Profile[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase.from("profiles").select(SELECT_COLUMNS).in("id", ids);
+  if (error) throw error;
+  return (data ?? []).map(rowToProfile);
+}
+
+export async function getMyProfile(): Promise<Profile | null> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select(SELECT_COLUMNS)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? rowToProfile(data) : null;
+}
+
+export async function signUpAndCreateProfile(input: {
+  email: string;
+  password: string;
   name: string;
   ageBand: AgeBand;
   sport: Sport;
@@ -79,9 +106,21 @@ export async function createProfile(input: {
   guardianName?: string;
   guardianEmail?: string;
 }): Promise<void> {
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: input.email,
+    password: input.password,
+  });
+  if (authError) throw authError;
+
+  const userId = authData.user?.id;
+  if (!userId) {
+    throw new Error("Check your email to confirm your account before your profile can be created.");
+  }
+
   const { data, error } = await supabase
     .from("profiles")
     .insert({
+      user_id: userId,
       name: input.name,
       age_band: input.ageBand,
       sport: input.sport,

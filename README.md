@@ -4,9 +4,10 @@ Find your training partner. TrainWith matches people nearby who are working on t
 drill, and skill level — long toss, bullpen sessions, shooting reps, baseline rallies — so
 training is easier to stick with and more fun to show up for.
 
-Profiles and matching are backed by a real Supabase (Postgres) database — signup creates a real
-row and browse/profile pages read from it. There's no authentication yet, so anyone can create a
-profile; guardian contact info for minors is write-only (see below).
+Profiles and matching are backed by a real Supabase (Postgres) database with real accounts — sign
+up creates an account and a profile tied to it, and you can send a training request to another
+athlete that they can accept or decline. Guardian contact info for minors is write-only (see
+below).
 
 ## Requirements
 
@@ -22,8 +23,12 @@ profile; guardian contact info for minors is write-only (see below).
    npm install
    ```
 
-2. Create a Supabase project, then run [`supabase-schema.sql`](./supabase-schema.sql) in its
-   **SQL Editor** to create the tables, row-level security policies, and seed demo profiles.
+2. Create a Supabase project, then run [`supabase-schema.sql`](./supabase-schema.sql) followed by
+   [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql) in its **SQL Editor** to create the
+   tables, row-level security policies, and seed demo profiles.
+
+   For faster local testing, also turn off **Confirm email** under
+   **Authentication → Providers → Email** so new signups don't need to click an email link.
 
 3. Copy `.env.local.example` to `.env.local` and fill in your project's URL and anon/public key
    (found in **Project Settings → API Keys**):
@@ -42,10 +47,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Data model
 
-- `profiles` — publicly readable and insertable (anyone can browse or sign up).
+- `profiles` — publicly readable; only the signed-in owner (`auth.uid() = user_id`) can create or
+  update their own row.
 - `guardian_contacts` — insert-only. There is no `SELECT` policy, so parent/guardian name and
   email can never be read back through the public API key, even though the app can save them
   during signup for minors.
+- `training_requests` — visible only to the sender and recipient; only the profile owner can send
+  a request from their own profile, and only the recipient can accept or decline it.
 
 ## Scripts
 
@@ -59,9 +67,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Project structure
 
 - `src/app/` — pages: landing (`/`), browse/matching (`/browse`), profile detail
-  (`/profile/[id]`), signup (`/signup`)
-- `src/components/` — shared UI (header, profile cards, filters, signup form, safety banner)
-- `src/lib/` — types, Supabase client and queries, and sport color/icon styling
+  (`/profile/[id]`), signup (`/signup`), login (`/login`), requests inbox (`/requests`)
+- `src/components/` — shared UI (header, profile cards, filters, signup/login forms, request
+  button, safety banner)
+- `src/lib/` — types, Supabase client, auth session hook, and profile/request queries
 
 ## Stack
 
