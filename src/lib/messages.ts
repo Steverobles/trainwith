@@ -59,6 +59,32 @@ export async function countUnreadMessages(myProfileId: string, acceptedRequestId
   return count ?? 0;
 }
 
+export async function listLastMessagesByRequest(requestIds: string[]): Promise<Record<string, Message>> {
+  if (requestIds.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from("messages")
+    .select("id, request_id, sender_profile_id, body, created_at")
+    .in("request_id", requestIds)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  const latest: Record<string, Message> = {};
+  for (const row of data ?? []) {
+    if (!latest[row.request_id]) {
+      latest[row.request_id] = {
+        id: row.id,
+        requestId: row.request_id,
+        senderProfileId: row.sender_profile_id,
+        body: row.body,
+        createdAt: row.created_at,
+      };
+    }
+  }
+  return latest;
+}
+
 export async function listUnreadByRequest(
   myProfileId: string,
   acceptedRequestIds: string[]

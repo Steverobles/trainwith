@@ -6,18 +6,21 @@ import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { listMyRequests } from "@/lib/requests";
-import { listUnreadByRequest } from "@/lib/messages";
+import { listUnreadByRequest, listLastMessagesByRequest, Message } from "@/lib/messages";
 import { Profile } from "@/lib/types";
 import { sportStyles } from "@/lib/sport-style";
 
 interface Thread {
   requestId: string;
+  requestCreatedAt: string;
   counterpart: Profile | undefined;
   unread: number;
+  lastMessage: Message | undefined;
 }
 
 export default function MessagesList() {
   const { session, loading: sessionLoading } = useSession();
+  const [myProfileId, setMyProfileId] = useState<string | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [ready, setReady] = useState(false);
 
@@ -30,25 +33,35 @@ export default function MessagesList() {
         setReady(true);
         return;
       }
+      setMyProfileId(profile.id);
 
       const allRequests = await listMyRequests(profile.id);
       const accepted = allRequests.filter((r) => r.status === "accepted");
       const acceptedIds = accepted.map((r) => r.id);
       const counterpartIds = accepted.map((r) => r.counterpartProfileId);
 
-      const [counterparts, unreadMap] = await Promise.all([
+      const [counterparts, unreadMap, lastMessageMap] = await Promise.all([
         getProfilesByIds(counterpartIds),
         listUnreadByRequest(profile.id, acceptedIds),
+        listLastMessagesByRequest(acceptedIds),
       ]);
       const byId = new Map(counterparts.map((p) => [p.id, p]));
 
-      setThreads(
-        accepted.map((r) => ({
-          requestId: r.id,
-          counterpart: byId.get(r.counterpartProfileId),
-          unread: unreadMap[r.id] ?? 0,
-        }))
-      );
+      const enriched = accepted.map((r) => ({
+        requestId: r.id,
+        requestCreatedAt: r.createdAt,
+        counterpart: byId.get(r.counterpartProfileId),
+        unread: unreadMap[r.id] ?? 0,
+        lastMessage: lastMessageMap[r.id],
+      }));
+
+      enriched.sort((a, b) => {
+        const aTime = a.lastMessage?.createdAt ?? a.requestCreatedAt;
+        const bTime = b.lastMessage?.createdAt ?? b.requestCreatedAt;
+        return new Date(bTime).getTime() - new Date(aTime).getTime();
+      });
+
+      setThreads(enriched);
       setReady(true);
     })();
   }, [session, sessionLoading]);
@@ -96,9 +109,18 @@ export default function MessagesList() {
                     <p className="truncate font-semibold text-gray-900">
                       {t.counterpart?.name ?? "Unknown athlete"}
                     </p>
-                    <p className="text-xs text-gray-500">
-                      {t.counterpart?.sport} · {t.counterpart?.focus}
-                    </p>
+                    {t.lastMessage ? (
+                      <p className="truncate text-sm text-gray-500">
+                        {t.lastMessage.senderProfileId === myProfileId && (
+                          <span className="text-gray-400">You: </span>
+                        )}
+                        {t.lastMessage.body}
+                      </p>
+                    ) : (
+                      <p className="truncate text-xs text-gray-500">
+                        {t.counterpart?.sport} · {t.counterpart?.focus}
+                      </p>
+                    )}
                   </div>
                 </div>
                 {t.unread > 0 && (
