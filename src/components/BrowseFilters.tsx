@@ -18,6 +18,9 @@ const poolOptions = [
   { value: "adult", label: "Adults (18+)" },
 ];
 
+const selectClass =
+  "rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100";
+
 export default function BrowseFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -40,7 +43,7 @@ export default function BrowseFilters() {
       <select
         value={pool}
         onChange={(e) => updateParam("pool", e.target.value)}
-        className="rounded-xl border bg-white px-3 py-2 text-sm text-gray-700"
+        className={selectClass}
       >
         <option value="">All ages</option>
         {poolOptions.map((o) => (
@@ -53,7 +56,7 @@ export default function BrowseFilters() {
       <select
         value={sport}
         onChange={(e) => updateParam("sport", e.target.value)}
-        className="rounded-xl border bg-white px-3 py-2 text-sm text-gray-700"
+        className={selectClass}
       >
         <option value="">All sports</option>
         {sports.map((s) => (
@@ -66,7 +69,7 @@ export default function BrowseFilters() {
       {(sport || pool) && (
         <button
           onClick={() => router.push("/browse")}
-          className="rounded-xl border px-3 py-2 text-sm text-gray-500 hover:text-gray-800"
+          className="rounded-full px-4 py-2 text-sm font-medium text-gray-400 transition-colors hover:text-gray-700"
         >
           Clear filters
         </button>

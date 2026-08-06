@@ -28,9 +28,11 @@ export default async function Browse({
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="mx-auto max-w-5xl px-4 py-6">
+      <main className="mx-auto max-w-5xl px-4 py-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight">Training partners near you</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
+            Training partners near you
+          </h1>
           <p className="mt-1 text-sm text-gray-600">
             Showing sample profiles around Austin, TX. Filter by sport or age group.
           </p>
@@ -40,19 +42,19 @@ export default async function Browse({
           <BrowseFilters />
         </Suspense>
 
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {results.map((p) => (
             <ProfileCard key={p.id} profile={p} />
           ))}
         </div>
 
         {results.length === 0 && (
-          <div className="mt-6 rounded-2xl border bg-white p-6 text-sm text-gray-600">
+          <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 text-sm text-gray-600 shadow-sm">
             No training partners match those filters yet. Try widening your search.
           </div>
         )}
 
-        <div className="mt-8">
+        <div className="mt-10">
           <SafetyBanner />
         </div>
       </main>
