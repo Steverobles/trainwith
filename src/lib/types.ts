@@ -13,10 +13,20 @@ export type SkillLevel = "Just starting" | "Rec / casual" | "Competitive" | "Var
 
 export const isMinorAgeBand = (band: AgeBand) => band === "13-15" || band === "16-17";
 
+export function ageBandFromBirthYear(birthYear: number, referenceYear = new Date().getFullYear()): AgeBand {
+  const age = referenceYear - birthYear;
+  if (age <= 15) return "13-15";
+  if (age <= 17) return "16-17";
+  if (age <= 24) return "18-24";
+  if (age <= 34) return "25-34";
+  return "35+";
+}
+
 export interface Profile {
   id: string;
   name: string;
   ageBand: AgeBand;
+  birthYear: number;
   city: string;
   state: string;
   lat: number | null;

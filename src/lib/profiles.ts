@@ -1,8 +1,9 @@
 import { supabase } from "./supabase";
 import { geocodeCityState } from "./geocode";
-import { AgeBand, Profile } from "./types";
+import { AgeBand, Profile, ageBandFromBirthYear } from "./types";
 
-const SELECT_COLUMNS = "id, name, age_band, city, state, lat, lng, bio, guardian_verified, user_id";
+const SELECT_COLUMNS =
+  "id, name, age_band, birth_year, city, state, lat, lng, bio, guardian_verified, user_id";
 
 export function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -15,6 +16,7 @@ interface ProfileRow {
   id: string;
   name: string;
   age_band: AgeBand;
+  birth_year: number;
   city: string;
   state: string;
   lat: number | null;
@@ -29,6 +31,7 @@ function rowToProfile(row: ProfileRow): Profile {
     id: row.id,
     name: row.name,
     ageBand: row.age_band,
+    birthYear: row.birth_year,
     city: row.city,
     state: row.state,
     lat: row.lat,
@@ -78,7 +81,7 @@ export async function signUpAndCreateProfile(input: {
   email: string;
   password: string;
   name: string;
-  ageBand: AgeBand;
+  birthYear: number;
   city: string;
   state: string;
   bio: string;
@@ -103,7 +106,8 @@ export async function signUpAndCreateProfile(input: {
     .insert({
       user_id: userId,
       name: input.name,
-      age_band: input.ageBand,
+      age_band: ageBandFromBirthYear(input.birthYear),
+      birth_year: input.birthYear,
       city: input.city,
       state: input.state,
       lat: coords?.lat ?? null,
@@ -129,7 +133,7 @@ export async function updateProfile(
   profileId: string,
   input: {
     name: string;
-    ageBand: AgeBand;
+    birthYear: number;
     city: string;
     state: string;
     bio: string;
@@ -138,7 +142,8 @@ export async function updateProfile(
 ): Promise<void> {
   const updates: Record<string, unknown> = {
     name: input.name,
-    age_band: input.ageBand,
+    age_band: ageBandFromBirthYear(input.birthYear),
+    birth_year: input.birthYear,
     city: input.city,
     state: input.state,
     bio: input.bio,

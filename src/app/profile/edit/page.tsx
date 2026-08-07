@@ -6,9 +6,9 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, updateProfile } from "@/lib/profiles";
-import { AgeBand } from "@/lib/types";
 
-const ageBands: AgeBand[] = ["13-15", "16-17", "18-24", "25-34", "35+"];
+const currentYear = new Date().getFullYear();
+const birthYears = Array.from({ length: 90 - 13 + 1 }, (_, i) => currentYear - 13 - i);
 
 const inputClass =
   "mt-1 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100";
@@ -20,7 +20,7 @@ export default function EditProfile() {
 
   const [profileId, setProfileId] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const [ageBand, setAgeBand] = useState<AgeBand>("18-24");
+  const [birthYear, setBirthYear] = useState(currentYear - 18);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [bio, setBio] = useState("");
@@ -40,7 +40,7 @@ export default function EditProfile() {
       }
       setProfileId(profile.id);
       setName(profile.name);
-      setAgeBand(profile.ageBand);
+      setBirthYear(profile.birthYear);
       setCity(profile.city);
       setState(profile.state);
       setBio(profile.bio);
@@ -57,7 +57,7 @@ export default function EditProfile() {
     setError(null);
     try {
       const regeocode = city !== originalCity || state !== originalState;
-      await updateProfile(profileId, { name, ageBand, city, state, bio, regeocode });
+      await updateProfile(profileId, { name, birthYear, city, state, bio, regeocode });
       router.push(`/profile/${profileId}`);
       router.refresh();
     } catch (err) {
@@ -105,15 +105,15 @@ export default function EditProfile() {
 
             <div className="space-y-4 sm:grid sm:grid-cols-3 sm:gap-2 sm:space-y-0">
               <div>
-                <label className={labelClass}>Age range</label>
+                <label className={labelClass}>Birth year</label>
                 <select
-                  value={ageBand}
-                  onChange={(e) => setAgeBand(e.target.value as AgeBand)}
+                  value={birthYear}
+                  onChange={(e) => setBirthYear(Number(e.target.value))}
                   className={inputClass}
                 >
-                  {ageBands.map((a) => (
-                    <option key={a} value={a}>
-                      {a}
+                  {birthYears.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
                     </option>
                   ))}
                 </select>

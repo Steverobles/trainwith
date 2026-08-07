@@ -33,6 +33,7 @@ interface PostWithProfileRow extends PostRow {
     id: string;
     name: string;
     age_band: Profile["ageBand"];
+    birth_year: number;
     city: string;
     state: string;
     lat: number | null;
@@ -50,7 +51,7 @@ export async function listPostsWithProfiles(filters: {
   let query = supabase
     .from("training_posts")
     .select(
-      `${POST_COLUMNS}, profiles!inner (id, name, age_band, city, state, lat, lng, bio, guardian_verified, user_id)`
+      `${POST_COLUMNS}, profiles!inner (id, name, age_band, birth_year, city, state, lat, lng, bio, guardian_verified, user_id)`
     )
     .order("created_at", { ascending: false });
 
@@ -72,6 +73,7 @@ export async function listPostsWithProfiles(filters: {
       id: row.profiles.id,
       name: row.profiles.name,
       ageBand: row.profiles.age_band,
+      birthYear: row.profiles.birth_year,
       city: row.profiles.city,
       state: row.profiles.state,
       lat: row.profiles.lat,

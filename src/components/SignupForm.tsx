@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AgeBand, isMinorAgeBand } from "@/lib/types";
+import { ageBandFromBirthYear, isMinorAgeBand } from "@/lib/types";
 import { signUpAndCreateProfile } from "@/lib/profiles";
 
-const ageBands: AgeBand[] = ["13-15", "16-17", "18-24", "25-34", "35+"];
+const currentYear = new Date().getFullYear();
+const birthYears = Array.from({ length: 90 - 13 + 1 }, (_, i) => currentYear - 13 - i);
 
 const inputClass =
   "mt-1 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100";
@@ -15,7 +16,7 @@ export default function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [ageBand, setAgeBand] = useState<AgeBand>("16-17");
+  const [birthYear, setBirthYear] = useState(currentYear - 16);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [bio, setBio] = useState("");
@@ -25,7 +26,7 @@ export default function SignupForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const minor = isMinorAgeBand(ageBand);
+  const minor = isMinorAgeBand(ageBandFromBirthYear(birthYear));
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,7 +37,7 @@ export default function SignupForm() {
         email,
         password,
         name,
-        ageBand,
+        birthYear,
         city,
         state,
         bio,
@@ -123,15 +124,15 @@ export default function SignupForm() {
 
       <div className="space-y-4 sm:grid sm:grid-cols-3 sm:gap-2 sm:space-y-0">
         <div>
-          <label className={labelClass}>Age range</label>
+          <label className={labelClass}>Birth year</label>
           <select
-            value={ageBand}
-            onChange={(e) => setAgeBand(e.target.value as AgeBand)}
+            value={birthYear}
+            onChange={(e) => setBirthYear(Number(e.target.value))}
             className={inputClass}
           >
-            {ageBands.map((a) => (
-              <option key={a} value={a}>
-                {a}
+            {birthYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
               </option>
             ))}
           </select>

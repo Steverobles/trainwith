@@ -34,8 +34,9 @@ Guardian contact info for minors is write-only (see below).
    [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql),
    [`supabase-schema-4-message-reads.sql`](./supabase-schema-4-message-reads.sql),
    [`supabase-schema-5-listings.sql`](./supabase-schema-5-listings.sql),
-   [`supabase-schema-6-location.sql`](./supabase-schema-6-location.sql), and
-   [`supabase-schema-7-editing.sql`](./supabase-schema-7-editing.sql) in order in its **SQL
+   [`supabase-schema-6-location.sql`](./supabase-schema-6-location.sql),
+   [`supabase-schema-7-editing.sql`](./supabase-schema-7-editing.sql), and
+   [`supabase-schema-8-age-gap.sql`](./supabase-schema-8-age-gap.sql) in order in its **SQL
    Editor** to create the tables, row-level security policies, and seed demo profiles.
 
    For faster local testing, also turn off **Confirm email** under
@@ -58,8 +59,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Data model
 
-- `profiles` — identity only (name, age band, city/state, bio). Publicly readable; only the
-  signed-in owner (`auth.uid() = user_id`) can create or update their own row.
+- `profiles` — identity only (name, birth year, city/state, bio). Publicly readable; only the
+  signed-in owner (`auth.uid() = user_id`) can create or update their own row. `age_band` is
+  always derived from `birth_year` in app code (never picked directly), so the two never diverge.
+- **Age-gap safety limit**: a restrictive RLS policy on `training_requests` blocks sending a
+  request to someone more than 2 years apart in age unless both people are 18+, in which case
+  there's no restriction. This is enforced at the database level — it can't be bypassed by calling
+  the API directly, only by lying about your own birth year at signup (an inherent limit of any
+  self-reported age system without ID verification).
 - `training_posts` — the "looking for a partner" listings (sport, focus, skill level), each owned
   by a profile. Publicly readable; only the owning profile's user can create, update, or delete
   their own listings. A profile can have any number of active listings.
