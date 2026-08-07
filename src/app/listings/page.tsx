@@ -76,8 +76,8 @@ export default function Listings() {
       <Header />
 
       <main className="mx-auto max-w-2xl px-4 py-8">
-        <div className="flex items-center justify-between gap-3">
-          <div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">My Listings</h1>
             <p className="mt-1 text-sm text-gray-600">
               What you&apos;re looking for right now. Browse shows these to everyone.
@@ -86,7 +86,7 @@ export default function Listings() {
           {myProfileId && !showForm && (
             <button
               onClick={() => setShowForm(true)}
-              className="shrink-0 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 hover:shadow-md"
+              className="self-start rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 hover:shadow-md sm:shrink-0"
             >
               + New listing
             </button>
@@ -110,7 +110,7 @@ export default function Listings() {
 
         {showForm && (
           <form onSubmit={onCreate} className="mt-6 space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className={labelClass}>Sport</label>
                 <select value={sport} onChange={(e) => setSport(e.target.value as Sport)} className={inputClass}>
@@ -180,20 +180,20 @@ export default function Listings() {
             return (
               <div key={p.id} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                 <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
-                <div className="flex items-center justify-between gap-3 p-4">
-                  <div className="flex min-w-0 items-center gap-2">
+                <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
                       <span>{style.icon}</span>
                       {p.sport}
                     </span>
-                    <p className="truncate text-sm font-medium text-gray-900">{p.focus}</p>
+                    <p className="text-sm font-medium text-gray-900">{p.focus}</p>
                     <span className="shrink-0 rounded-full bg-gray-50 px-2 py-0.5 text-xs text-gray-500 ring-1 ring-inset ring-gray-200">
                       {p.skillLevel}
                     </span>
                   </div>
                   <button
                     onClick={() => onDelete(p.id)}
-                    className="shrink-0 text-xs font-medium text-gray-400 hover:text-red-600"
+                    className="self-start text-xs font-medium text-gray-400 hover:text-red-600 sm:self-auto"
                   >
                     Delete
                   </button>

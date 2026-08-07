@@ -86,7 +86,7 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Email</label>
           <input
@@ -121,7 +121,7 @@ export default function SignupForm() {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="space-y-4 sm:grid sm:grid-cols-3 sm:gap-2 sm:space-y-0">
         <div>
           <label className={labelClass}>Age range</label>
           <select
@@ -136,7 +136,7 @@ export default function SignupForm() {
             ))}
           </select>
         </div>
-        <div className="col-span-2 grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 sm:col-span-2">
           <div className="col-span-2">
             <label className={labelClass}>City</label>
             <input
@@ -178,7 +178,7 @@ export default function SignupForm() {
             Required for athletes under 18. We&apos;ll use this to verify your profile before it
             goes live.
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-amber-900">Guardian name</label>
               <input
