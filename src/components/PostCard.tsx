@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { Profile, isMinorAgeBand } from "@/lib/types";
+import { isMinorAgeBand } from "@/lib/types";
+import { PostWithProfile } from "@/lib/posts";
 import { sportStyles } from "@/lib/sport-style";
 
-export default function ProfileCard({ profile }: { profile: Profile }) {
+export default function PostCard({ post }: { post: PostWithProfile }) {
+  const { profile } = post;
   const minor = isMinorAgeBand(profile.ageBand);
-  const style = sportStyles[profile.sport];
+  const style = sportStyles[post.sport];
 
   return (
     <Link
@@ -37,17 +39,15 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
         <div className="mt-3 flex flex-wrap gap-1.5">
           <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
             <span>{style.icon}</span>
-            {profile.sport}
+            {post.sport}
           </span>
           <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
-            {profile.focus}
+            {post.focus}
           </span>
           <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
-            {profile.skillLevel}
+            {post.skillLevel}
           </span>
         </div>
-
-        <p className="mt-3 line-clamp-2 text-sm text-gray-600">{profile.bio}</p>
 
         {minor && (
           <p className="mt-3 text-xs font-medium text-amber-700">

@@ -73,6 +73,12 @@ export default function Header() {
                 Profile
               </Link>
               <Link
+                href="/listings"
+                className="rounded-full px-3 py-1.5 transition-colors hover:bg-gray-100 hover:text-gray-950"
+              >
+                Listings
+              </Link>
+              <Link
                 href="/requests"
                 className="relative flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:bg-gray-100 hover:text-gray-950"
               >

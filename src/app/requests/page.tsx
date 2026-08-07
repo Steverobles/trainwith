@@ -8,7 +8,6 @@ import { useSession } from "@/lib/auth";
 import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { listMyRequests, respondToRequest, RequestListItem } from "@/lib/requests";
 import { Profile } from "@/lib/types";
-import { sportStyles } from "@/lib/sport-style";
 
 interface EnrichedRequest extends RequestListItem {
   counterpart: Profile | undefined;
@@ -165,21 +164,14 @@ function RequestRow({
   responding?: boolean;
 }) {
   const profile = request.counterpart;
-  const style = profile ? sportStyles[profile.sport] : undefined;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-      {style && <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />}
       <div className="flex items-center justify-between gap-3 p-4">
         <div className="flex min-w-0 items-center gap-3">
-          {profile && style && (
-            <div className="relative shrink-0">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}>
-                {profile.initials}
-              </div>
-              <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-white text-[9px] shadow-sm">
-                {style.icon}
-              </span>
+          {profile && (
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+              {profile.initials}
             </div>
           )}
           <div className="min-w-0">
@@ -189,7 +181,9 @@ function RequestRow({
             >
               {profile?.name ?? "Unknown athlete"}
             </Link>
-            <p className="text-xs text-gray-500">{profile?.focus}</p>
+            <p className="text-xs text-gray-500">
+              {profile?.city}, {profile?.state}
+            </p>
           </div>
         </div>
 

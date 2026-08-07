@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import Header from "@/components/Header";
 import BrowseFilters from "@/components/BrowseFilters";
-import ProfileGrid from "@/components/ProfileGrid";
+import PostGrid from "@/components/PostGrid";
 import SafetyBanner from "@/components/SafetyBanner";
-import { listProfiles } from "@/lib/profiles";
+import { listPostsWithProfiles } from "@/lib/posts";
 import { Sport } from "@/lib/types";
 
 export default async function Browse({
@@ -15,7 +15,7 @@ export default async function Browse({
   const sport = sp.sport as Sport | undefined;
   const pool = sp.pool;
 
-  const results = await listProfiles({ sport, pool });
+  const results = await listPostsWithProfiles({ sport, pool });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,12 +36,12 @@ export default async function Browse({
         </Suspense>
 
         <div className="mt-6">
-          <ProfileGrid profiles={results} />
+          <PostGrid posts={results} />
         </div>
 
         {results.length === 0 && (
           <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 text-sm text-gray-600 shadow-sm">
-            No training partners match those filters yet. Try widening your search.
+            No listings match those filters yet. Try widening your search.
           </div>
         )}
 

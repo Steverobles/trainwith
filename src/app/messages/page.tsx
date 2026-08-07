@@ -8,7 +8,6 @@ import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { listMyRequests } from "@/lib/requests";
 import { listUnreadByRequest, listLastMessagesByRequest, Message } from "@/lib/messages";
 import { Profile } from "@/lib/types";
-import { sportStyles } from "@/lib/sport-style";
 import { formatRelativeTime } from "@/lib/format";
 
 interface Thread {
@@ -94,7 +93,6 @@ export default function MessagesList() {
 
         <div className="mt-6 space-y-3">
           {threads.map((t) => {
-            const style = t.counterpart ? sportStyles[t.counterpart.sport] : undefined;
             const time = t.lastMessage?.createdAt ?? t.requestCreatedAt;
             return (
               <Link
@@ -102,19 +100,11 @@ export default function MessagesList() {
                 href={`/messages/${t.requestId}`}
                 className="block overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md"
               >
-                {style && <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />}
                 <div className="flex items-center justify-between gap-3 p-4">
                   <div className="flex min-w-0 items-center gap-3">
-                    {t.counterpart && style && (
-                      <div className="relative shrink-0">
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
-                        >
-                          {t.counterpart.initials}
-                        </div>
-                        <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-white text-[9px] shadow-sm">
-                          {style.icon}
-                        </span>
+                    {t.counterpart && (
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                        {t.counterpart.initials}
                       </div>
                     )}
                     <div className="min-w-0">
@@ -130,7 +120,7 @@ export default function MessagesList() {
                         </p>
                       ) : (
                         <p className="truncate text-xs text-gray-500">
-                          {t.counterpart?.sport} · {t.counterpart?.focus}
+                          {t.counterpart?.city}, {t.counterpart?.state}
                         </p>
                       )}
                     </div>

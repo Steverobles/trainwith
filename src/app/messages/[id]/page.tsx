@@ -9,7 +9,6 @@ import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { getRequestById } from "@/lib/requests";
 import { listMessages, sendMessage, markMessagesRead, Message } from "@/lib/messages";
 import { Profile } from "@/lib/types";
-import { sportStyles } from "@/lib/sport-style";
 
 const POLL_MS = 4000;
 
@@ -98,8 +97,6 @@ export default function MessageThread() {
     }
   }
 
-  const style = counterpart ? sportStyles[counterpart.sport] : undefined;
-
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       <Header />
@@ -127,27 +124,23 @@ export default function MessageThread() {
         {ready && !notAllowed && (
           <>
             <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-              {style && <div className={`h-1.5 w-full bg-gradient-to-r ${style.accent}`} />}
+              <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 to-indigo-600" />
 
-              {counterpart && style && (
-                <div className="flex items-center gap-3 border-b border-gray-100 p-4">
-                  <div className="relative shrink-0">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
-                    >
-                      {counterpart.initials}
-                    </div>
-                    <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-white text-[9px] shadow-sm">
-                      {style.icon}
-                    </span>
+              {counterpart && (
+                <Link
+                  href={`/profile/${counterpart.id}`}
+                  className="flex items-center gap-3 border-b border-gray-100 p-4 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                    {counterpart.initials}
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">{counterpart.name}</p>
                     <p className="text-xs text-gray-500">
-                      {counterpart.sport} · {counterpart.focus}
+                      {counterpart.city}, {counterpart.state}
                     </p>
                   </div>
-                </div>
+                </Link>
               )}
 
               <div className="flex min-h-80 flex-1 flex-col gap-2 overflow-y-auto p-4">

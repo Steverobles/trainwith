@@ -1,20 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { AgeBand, Sport, SkillLevel, isMinorAgeBand } from "@/lib/types";
+import Link from "next/link";
+import { AgeBand, isMinorAgeBand } from "@/lib/types";
 import { signUpAndCreateProfile } from "@/lib/profiles";
 
 const ageBands: AgeBand[] = ["13-15", "16-17", "18-24", "25-34", "35+"];
-const sports: Sport[] = [
-  "Baseball",
-  "Softball",
-  "Basketball",
-  "Football",
-  "Soccer",
-  "Tennis",
-  "Track & Field",
-];
-const skillLevels: SkillLevel[] = ["Just starting", "Rec / casual", "Competitive", "Varsity+"];
 
 const inputClass =
   "mt-1 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100";
@@ -25,11 +16,9 @@ export default function SignupForm() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [ageBand, setAgeBand] = useState<AgeBand>("16-17");
-  const [sport, setSport] = useState<Sport>("Baseball");
-  const [focus, setFocus] = useState("");
-  const [skillLevel, setSkillLevel] = useState<SkillLevel>("Rec / casual");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [bio, setBio] = useState("");
   const [guardianName, setGuardianName] = useState("");
   const [guardianEmail, setGuardianEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -48,11 +37,9 @@ export default function SignupForm() {
         password,
         name,
         ageBand,
-        sport,
-        focus,
-        skillLevel,
         city,
         state,
+        bio,
         guardianName: minor ? guardianName : undefined,
         guardianEmail: minor ? guardianEmail : undefined,
       });
@@ -85,8 +72,14 @@ export default function SignupForm() {
         <p className="mt-2 text-sm text-gray-600">
           {minor
             ? "Since you're under 18, we'll reach out to your parent or guardian to confirm details before your profile goes live."
-            : "Your profile is ready. Head over to Browse to find a training partner."}
+            : "Your profile is ready."}
         </p>
+        <Link
+          href="/listings"
+          className="mt-5 inline-block rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/20 hover:shadow-lg"
+        >
+          Create your first listing
+        </Link>
       </div>
     );
   }
@@ -128,7 +121,7 @@ export default function SignupForm() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-2">
         <div>
           <label className={labelClass}>Age range</label>
           <select
@@ -143,49 +136,7 @@ export default function SignupForm() {
             ))}
           </select>
         </div>
-        <div>
-          <label className={labelClass}>Sport</label>
-          <select
-            value={sport}
-            onChange={(e) => setSport(e.target.value as Sport)}
-            className={inputClass}
-          >
-            {sports.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label className={labelClass}>What are you training?</label>
-        <input
-          required
-          value={focus}
-          onChange={(e) => setFocus(e.target.value)}
-          className={inputClass}
-          placeholder="e.g. Long toss, ball handling, baseline rallying"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className={labelClass}>Skill level</label>
-          <select
-            value={skillLevel}
-            onChange={(e) => setSkillLevel(e.target.value as SkillLevel)}
-            className={inputClass}
-          >
-            {skillLevels.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="col-span-2 grid grid-cols-3 gap-2">
           <div className="col-span-2">
             <label className={labelClass}>City</label>
             <input
@@ -208,6 +159,16 @@ export default function SignupForm() {
             />
           </div>
         </div>
+      </div>
+
+      <div>
+        <label className={labelClass}>About you</label>
+        <textarea
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          className={`${inputClass} min-h-24 resize-none`}
+          placeholder="What sports do you play, and what are you working toward? e.g. Varsity pitcher trying to add velocity before fall ball."
+        />
       </div>
 
       {minor && (

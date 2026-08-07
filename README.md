@@ -4,11 +4,15 @@ Find your training partner. TrainWith matches people nearby who are working on t
 drill, and skill level — long toss, bullpen sessions, shooting reps, baseline rallies — so
 training is easier to stick with and more fun to show up for.
 
-Profiles and matching are backed by a real Supabase (Postgres) database with real accounts — sign
-up creates an account and a profile tied to it, you can send a training request to another
-athlete, and once they accept it becomes a conversation on the Messages tab. Requests and
-Messages are deliberately separate: Requests is just the pending accept/decline inbox, Messages is
-where your actual connections live. Guardian contact info for minors is write-only (see below).
+Profiles and matching are backed by a real Supabase (Postgres) database with real accounts.
+Profile and "what I'm looking for" are deliberately separate: your **profile** is your identity
+(name, age, city, a bio about the sports you play and what you're working toward), while
+**listings** are the specific "looking for a partner" cards you post (sport, focus, skill level) —
+you can have several at once, and Browse shows listings, not people directly. Sending a training
+request still connects two *people*, and once accepted it becomes a conversation on the Messages
+tab. Requests and Messages are deliberately separate too: Requests is just the pending
+accept/decline inbox, Messages is where your actual connections live. Guardian contact info for
+minors is write-only (see below).
 
 ## Requirements
 
@@ -26,9 +30,10 @@ where your actual connections live. Guardian contact info for minors is write-on
 
 2. Create a Supabase project, then run [`supabase-schema.sql`](./supabase-schema.sql),
    [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql),
-   [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql), and
-   [`supabase-schema-4-message-reads.sql`](./supabase-schema-4-message-reads.sql) in order in its
-   **SQL Editor** to create the tables, row-level security policies, and seed demo profiles.
+   [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql),
+   [`supabase-schema-4-message-reads.sql`](./supabase-schema-4-message-reads.sql), and
+   [`supabase-schema-5-listings.sql`](./supabase-schema-5-listings.sql) in order in its **SQL
+   Editor** to create the tables, row-level security policies, and seed demo profiles.
 
    For faster local testing, also turn off **Confirm email** under
    **Authentication → Providers → Email** so new signups don't need to click an email link.
@@ -50,8 +55,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Data model
 
-- `profiles` — publicly readable; only the signed-in owner (`auth.uid() = user_id`) can create or
-  update their own row.
+- `profiles` — identity only (name, age band, city/state, bio). Publicly readable; only the
+  signed-in owner (`auth.uid() = user_id`) can create or update their own row.
+- `training_posts` — the "looking for a partner" listings (sport, focus, skill level), each owned
+  by a profile. Publicly readable; only the owning profile's user can create or delete their own
+  listings. A profile can have any number of active listings.
 - `guardian_contacts` — insert-only. There is no `SELECT` policy, so parent/guardian name and
   email can never be read back through the public API key, even though the app can save them
   during signup for minors.
@@ -74,12 +82,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Project structure
 
 - `src/app/` — pages: landing (`/`), browse/matching (`/browse`), profile detail
-  (`/profile/[id]`), your own profile redirect (`/profile/me`), signup (`/signup`), login
-  (`/login`), pending requests inbox (`/requests`), conversation list (`/messages`), chat thread
-  (`/messages/[id]`)
-- `src/components/` — shared UI (header, profile grid/cards, filters, signup/login forms, request
+  (`/profile/[id]`), your own profile redirect (`/profile/me`), manage your listings
+  (`/listings`), signup (`/signup`), login (`/login`), pending requests inbox (`/requests`),
+  conversation list (`/messages`), chat thread (`/messages/[id]`)
+- `src/components/` — shared UI (header, listing grid/cards, filters, signup/login forms, request
   button, safety banner)
-- `src/lib/` — types, Supabase client, auth session hook, and profile/request/message queries
+- `src/lib/` — types, Supabase client, auth session hook, and profile/post/request/message queries
 
 ## Stack
 
