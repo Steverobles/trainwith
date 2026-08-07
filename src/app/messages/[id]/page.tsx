@@ -126,41 +126,53 @@ export default function MessageThread() {
 
         {ready && !notAllowed && (
           <>
-            {counterpart && style && (
-              <div className="mt-4 flex items-center gap-3">
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
-                >
-                  {counterpart.initials}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{counterpart.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {counterpart.sport} · {counterpart.focus}
-                  </p>
-                </div>
-              </div>
-            )}
+            <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              {style && <div className={`h-1.5 w-full bg-gradient-to-r ${style.accent}`} />}
 
-            <div className="mt-4 flex min-h-80 flex-1 flex-col gap-2 overflow-y-auto rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-              {messages.length === 0 && (
-                <p className="text-sm text-gray-400">Say hey and set up your first session.</p>
-              )}
-              {messages.map((m) => {
-                const mine = m.senderProfileId === myProfileId;
-                return (
-                  <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+              {counterpart && style && (
+                <div className="flex items-center gap-3 border-b border-gray-100 p-4">
+                  <div className="relative shrink-0">
                     <div
-                      className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
-                        mine ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
-                      }`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
                     >
-                      {m.body}
+                      {counterpart.initials}
                     </div>
+                    <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-white text-[9px] shadow-sm">
+                      {style.icon}
+                    </span>
                   </div>
-                );
-              })}
-              <div ref={bottomRef} />
+                  <div>
+                    <p className="font-semibold text-gray-900">{counterpart.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {counterpart.sport} · {counterpart.focus}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex min-h-80 flex-1 flex-col gap-2 overflow-y-auto p-4">
+                {messages.length === 0 && (
+                  <div className="flex flex-1 items-center justify-center">
+                    <p className="text-sm text-gray-400">Say hey and set up your first session.</p>
+                  </div>
+                )}
+                {messages.map((m) => {
+                  const mine = m.senderProfileId === myProfileId;
+                  return (
+                    <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                      <div
+                        title={new Date(m.createdAt).toLocaleString()}
+                        className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
+                          mine ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {m.body}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div ref={bottomRef} />
+              </div>
             </div>
 
             <form onSubmit={onSend} className="mt-3 flex gap-2">

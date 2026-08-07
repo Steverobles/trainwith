@@ -59,39 +59,48 @@ export default function Header() {
             Train<span className="text-blue-600">With</span>
           </span>
         </Link>
-        <nav className="flex items-center gap-6 text-sm font-medium text-gray-600">
-          <Link href="/browse" className="transition-colors hover:text-gray-950">
+        <nav className="flex items-center gap-1 text-sm font-medium text-gray-600">
+          <Link href="/browse" className="rounded-full px-3 py-1.5 transition-colors hover:bg-gray-100 hover:text-gray-950">
             Browse
           </Link>
 
           {loading ? null : session ? (
             <>
-              <Link href="/profile/me" className="transition-colors hover:text-gray-950">
+              <Link
+                href="/profile/me"
+                className="rounded-full px-3 py-1.5 transition-colors hover:bg-gray-100 hover:text-gray-950"
+              >
                 Profile
               </Link>
-              <Link href="/requests" className="relative flex items-center gap-1.5 transition-colors hover:text-gray-950">
+              <Link
+                href="/requests"
+                className="relative flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:bg-gray-100 hover:text-gray-950"
+              >
                 Requests
                 <NavBadge count={pendingCount} />
               </Link>
-              <Link href="/messages" className="relative flex items-center gap-1.5 transition-colors hover:text-gray-950">
+              <Link
+                href="/messages"
+                className="relative flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:bg-gray-100 hover:text-gray-950"
+              >
                 Messages
                 <NavBadge count={unreadCount} />
               </Link>
               <button
                 onClick={handleSignOut}
-                className="rounded-full border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50"
+                className="ml-2 rounded-full border border-gray-300 px-4 py-1.5 text-gray-700 transition-colors hover:bg-gray-50"
               >
                 Log out
               </button>
             </>
           ) : (
             <>
-              <Link href="/login" className="transition-colors hover:text-gray-950">
+              <Link href="/login" className="rounded-full px-3 py-1.5 transition-colors hover:bg-gray-100 hover:text-gray-950">
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="rounded-full bg-gray-950 px-4 py-2 text-white shadow-sm transition-all hover:bg-gray-800 hover:shadow-md"
+                className="ml-2 rounded-full bg-gray-950 px-4 py-1.5 text-white shadow-sm transition-all hover:bg-gray-800 hover:shadow-md"
               >
                 Sign up
               </Link>

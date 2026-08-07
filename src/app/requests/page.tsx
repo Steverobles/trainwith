@@ -100,9 +100,18 @@ export default function Requests() {
         {session && myProfileId && (
           <>
             <section className="mt-6">
-              <h2 className="mb-3 text-sm font-semibold tracking-tight text-gray-900">Incoming</h2>
+              <div className="mb-3 flex items-center gap-2">
+                <h2 className="text-sm font-semibold tracking-tight text-gray-900">Incoming</h2>
+                {incoming.length > 0 && (
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                    {incoming.length}
+                  </span>
+                )}
+              </div>
               {incoming.length === 0 && (
-                <p className="text-sm text-gray-500">No incoming requests yet.</p>
+                <div className="rounded-2xl border border-dashed border-gray-200 bg-white/60 p-6 text-center text-sm text-gray-400">
+                  No incoming requests yet.
+                </div>
               )}
               <div className="space-y-3">
                 {incoming.map((r) => (
@@ -118,9 +127,18 @@ export default function Requests() {
             </section>
 
             <section className="mt-8">
-              <h2 className="mb-3 text-sm font-semibold tracking-tight text-gray-900">Sent</h2>
+              <div className="mb-3 flex items-center gap-2">
+                <h2 className="text-sm font-semibold tracking-tight text-gray-900">Sent</h2>
+                {outgoing.length > 0 && (
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                    {outgoing.length}
+                  </span>
+                )}
+              </div>
               {outgoing.length === 0 && (
-                <p className="text-sm text-gray-500">You haven&apos;t sent any requests yet.</p>
+                <div className="rounded-2xl border border-dashed border-gray-200 bg-white/60 p-6 text-center text-sm text-gray-400">
+                  You haven&apos;t sent any requests yet.
+                </div>
               )}
               <div className="space-y-3">
                 {outgoing.map((r) => (
@@ -150,46 +168,54 @@ function RequestRow({
   const style = profile ? sportStyles[profile.sport] : undefined;
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-      <div className="flex min-w-0 items-center gap-3">
-        {profile && style && (
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}>
-            {profile.initials}
+    <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+      {style && <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />}
+      <div className="flex items-center justify-between gap-3 p-4">
+        <div className="flex min-w-0 items-center gap-3">
+          {profile && style && (
+            <div className="relative shrink-0">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}>
+                {profile.initials}
+              </div>
+              <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-white text-[9px] shadow-sm">
+                {style.icon}
+              </span>
+            </div>
+          )}
+          <div className="min-w-0">
+            <Link
+              href={profile ? `/profile/${profile.id}` : "#"}
+              className="truncate font-semibold text-gray-900 hover:text-blue-600"
+            >
+              {profile?.name ?? "Unknown athlete"}
+            </Link>
+            <p className="text-xs text-gray-500">{profile?.focus}</p>
           </div>
-        )}
-        <div className="min-w-0">
-          <Link
-            href={profile ? `/profile/${profile.id}` : "#"}
-            className="truncate font-semibold text-gray-900 hover:text-blue-600"
-          >
-            {profile?.name ?? "Unknown athlete"}
-          </Link>
-          <p className="text-xs text-gray-500">{profile?.sport}</p>
         </div>
-      </div>
 
-      {onAccept && onDecline && request.status === "pending" ? (
-        <div className="flex shrink-0 gap-2">
-          <button
-            onClick={onAccept}
-            disabled={responding}
-            className="rounded-full bg-gray-950 px-3 py-1.5 text-xs font-semibold text-white hover:bg-gray-800 disabled:opacity-60"
-          >
-            Accept
-          </button>
-          <button
-            onClick={onDecline}
-            disabled={responding}
-            className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
-          >
-            Decline
-          </button>
-        </div>
-      ) : (
-        <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
-          {request.status === "declined" ? "Declined" : "Pending"}
-        </span>
-      )}
+        {onAccept && onDecline && request.status === "pending" ? (
+          <div className="flex shrink-0 gap-2">
+            <button
+              onClick={onAccept}
+              disabled={responding}
+              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-600/20 hover:shadow-md disabled:opacity-60"
+            >
+              Accept
+            </button>
+            <button
+              onClick={onDecline}
+              disabled={responding}
+              className="rounded-full border border-gray-300 px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+            >
+              Decline
+            </button>
+          </div>
+        ) : (
+          <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
+            {request.status === "declined" ? "Declined" : "Pending"}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

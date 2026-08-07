@@ -9,6 +9,7 @@ import { listMyRequests } from "@/lib/requests";
 import { listUnreadByRequest, listLastMessagesByRequest, Message } from "@/lib/messages";
 import { Profile } from "@/lib/types";
 import { sportStyles } from "@/lib/sport-style";
+import { formatRelativeTime } from "@/lib/format";
 
 interface Thread {
   requestId: string;
@@ -83,51 +84,66 @@ export default function MessagesList() {
         )}
 
         {ready && session && threads.length === 0 && (
-          <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 text-sm text-gray-600 shadow-sm">
-            No conversations yet. Accept a training request to start one.
+          <div className="mt-6 rounded-2xl border border-dashed border-gray-200 bg-white/60 p-8 text-center">
+            <p className="text-2xl">💬</p>
+            <p className="mt-2 text-sm text-gray-500">
+              No conversations yet. Accept a training request to start one.
+            </p>
           </div>
         )}
 
         <div className="mt-6 space-y-3">
           {threads.map((t) => {
             const style = t.counterpart ? sportStyles[t.counterpart.sport] : undefined;
+            const time = t.lastMessage?.createdAt ?? t.requestCreatedAt;
             return (
               <Link
                 key={t.requestId}
                 href={`/messages/${t.requestId}`}
-                className="flex items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                className="block overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md"
               >
-                <div className="flex min-w-0 items-center gap-3">
-                  {t.counterpart && style && (
-                    <div
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
-                    >
-                      {t.counterpart.initials}
+                {style && <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />}
+                <div className="flex items-center justify-between gap-3 p-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    {t.counterpart && style && (
+                      <div className="relative shrink-0">
+                        <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
+                        >
+                          {t.counterpart.initials}
+                        </div>
+                        <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-white text-[9px] shadow-sm">
+                          {style.icon}
+                        </span>
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-gray-900">
+                        {t.counterpart?.name ?? "Unknown athlete"}
+                      </p>
+                      {t.lastMessage ? (
+                        <p className="truncate text-sm text-gray-500">
+                          {t.lastMessage.senderProfileId === myProfileId && (
+                            <span className="text-gray-400">You: </span>
+                          )}
+                          {t.lastMessage.body}
+                        </p>
+                      ) : (
+                        <p className="truncate text-xs text-gray-500">
+                          {t.counterpart?.sport} · {t.counterpart?.focus}
+                        </p>
+                      )}
                     </div>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold text-gray-900">
-                      {t.counterpart?.name ?? "Unknown athlete"}
-                    </p>
-                    {t.lastMessage ? (
-                      <p className="truncate text-sm text-gray-500">
-                        {t.lastMessage.senderProfileId === myProfileId && (
-                          <span className="text-gray-400">You: </span>
-                        )}
-                        {t.lastMessage.body}
-                      </p>
-                    ) : (
-                      <p className="truncate text-xs text-gray-500">
-                        {t.counterpart?.sport} · {t.counterpart?.focus}
-                      </p>
+                  </div>
+                  <div className="flex shrink-0 flex-col items-end gap-1.5">
+                    <span className="text-xs text-gray-400">{formatRelativeTime(time)}</span>
+                    {t.unread > 0 && (
+                      <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                        {t.unread}
+                      </span>
                     )}
                   </div>
                 </div>
-                {t.unread > 0 && (
-                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
-                    {t.unread}
-                  </span>
-                )}
               </Link>
             );
           })}
