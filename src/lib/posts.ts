@@ -110,6 +110,17 @@ export async function createPost(input: {
   if (error) throw error;
 }
 
+export async function updatePost(
+  postId: string,
+  input: { sport: Sport; focus: string; skillLevel: SkillLevel }
+): Promise<void> {
+  const { error } = await supabase
+    .from("training_posts")
+    .update({ sport: input.sport, focus: input.focus, skill_level: input.skillLevel })
+    .eq("id", postId);
+  if (error) throw error;
+}
+
 export async function deletePost(postId: string): Promise<void> {
   const { error } = await supabase.from("training_posts").delete().eq("id", postId);
   if (error) throw error;

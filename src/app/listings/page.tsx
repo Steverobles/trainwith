@@ -5,7 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile } from "@/lib/profiles";
-import { listPostsByProfile, createPost, deletePost } from "@/lib/posts";
+import { listPostsByProfile, createPost, updatePost, deletePost } from "@/lib/posts";
 import { Sport, SkillLevel, TrainingPost } from "@/lib/types";
 import { sportStyles } from "@/lib/sport-style";
 
@@ -175,34 +175,134 @@ export default function Listings() {
         )}
 
         <div className="mt-6 space-y-3">
-          {posts.map((p) => {
-            const style = sportStyles[p.sport];
-            return (
-              <div key={p.id} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-                <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
-                <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
-                      <span>{style.icon}</span>
-                      {p.sport}
-                    </span>
-                    <p className="text-sm font-medium text-gray-900">{p.focus}</p>
-                    <span className="shrink-0 rounded-full bg-gray-50 px-2 py-0.5 text-xs text-gray-500 ring-1 ring-inset ring-gray-200">
-                      {p.skillLevel}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => onDelete(p.id)}
-                    className="self-start text-xs font-medium text-gray-400 hover:text-red-600 sm:self-auto"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          {posts.map((p) => (
+            <ListingRow
+              key={p.id}
+              post={p}
+              onDelete={() => onDelete(p.id)}
+              onUpdated={(updated) =>
+                setPosts((prev) => prev.map((post) => (post.id === updated.id ? updated : post)))
+              }
+            />
+          ))}
         </div>
       </main>
+    </div>
+  );
+}
+
+function ListingRow({
+  post,
+  onDelete,
+  onUpdated,
+}: {
+  post: TrainingPost;
+  onDelete: () => void;
+  onUpdated: (updated: TrainingPost) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [sport, setSport] = useState<Sport>(post.sport);
+  const [focus, setFocus] = useState(post.focus);
+  const [skillLevel, setSkillLevel] = useState<SkillLevel>(post.skillLevel);
+  const [saving, setSaving] = useState(false);
+
+  const style = sportStyles[editing ? sport : post.sport];
+
+  async function onSave(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = focus.trim();
+    if (!trimmed) return;
+    setSaving(true);
+    try {
+      await updatePost(post.id, { sport, focus: trimmed, skillLevel });
+      onUpdated({ ...post, sport, focus: trimmed, skillLevel });
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (editing) {
+    return (
+      <form onSubmit={onSave} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
+        <div className="space-y-3 p-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <select value={sport} onChange={(e) => setSport(e.target.value as Sport)} className={inputClass}>
+              {sports.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            <select
+              value={skillLevel}
+              onChange={(e) => setSkillLevel(e.target.value as SkillLevel)}
+              className={inputClass}
+            >
+              {skillLevels.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+          <input
+            required
+            value={focus}
+            onChange={(e) => setFocus(e.target.value)}
+            className={inputClass}
+            placeholder="What are you training?"
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-semibold text-white disabled:opacity-60"
+            >
+              {saving ? "Saving…" : "Save"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSport(post.sport);
+                setFocus(post.focus);
+                setSkillLevel(post.skillLevel);
+                setEditing(false);
+              }}
+              className="rounded-full border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
+      <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+            <span>{style.icon}</span>
+            {post.sport}
+          </span>
+          <p className="text-sm font-medium text-gray-900">{post.focus}</p>
+          <span className="shrink-0 rounded-full bg-gray-50 px-2 py-0.5 text-xs text-gray-500 ring-1 ring-inset ring-gray-200">
+            {post.skillLevel}
+          </span>
+        </div>
+        <div className="flex shrink-0 gap-3 self-start sm:self-auto">
+          <button onClick={() => setEditing(true)} className="text-xs font-medium text-gray-400 hover:text-blue-600">
+            Edit
+          </button>
+          <button onClick={onDelete} className="text-xs font-medium text-gray-400 hover:text-red-600">
+            Delete
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

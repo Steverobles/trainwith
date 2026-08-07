@@ -124,3 +124,32 @@ export async function signUpAndCreateProfile(input: {
     if (guardianError) throw guardianError;
   }
 }
+
+export async function updateProfile(
+  profileId: string,
+  input: {
+    name: string;
+    ageBand: AgeBand;
+    city: string;
+    state: string;
+    bio: string;
+    regeocode: boolean;
+  }
+): Promise<void> {
+  const updates: Record<string, unknown> = {
+    name: input.name,
+    age_band: input.ageBand,
+    city: input.city,
+    state: input.state,
+    bio: input.bio,
+  };
+
+  if (input.regeocode) {
+    const coords = await geocodeCityState(input.city, input.state);
+    updates.lat = coords?.lat ?? null;
+    updates.lng = coords?.lng ?? null;
+  }
+
+  const { error } = await supabase.from("profiles").update(updates).eq("id", profileId);
+  if (error) throw error;
+}

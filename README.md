@@ -33,8 +33,9 @@ Guardian contact info for minors is write-only (see below).
    [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql),
    [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql),
    [`supabase-schema-4-message-reads.sql`](./supabase-schema-4-message-reads.sql),
-   [`supabase-schema-5-listings.sql`](./supabase-schema-5-listings.sql), and
-   [`supabase-schema-6-location.sql`](./supabase-schema-6-location.sql) in order in its **SQL
+   [`supabase-schema-5-listings.sql`](./supabase-schema-5-listings.sql),
+   [`supabase-schema-6-location.sql`](./supabase-schema-6-location.sql), and
+   [`supabase-schema-7-editing.sql`](./supabase-schema-7-editing.sql) in order in its **SQL
    Editor** to create the tables, row-level security policies, and seed demo profiles.
 
    For faster local testing, also turn off **Confirm email** under
@@ -60,8 +61,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - `profiles` — identity only (name, age band, city/state, bio). Publicly readable; only the
   signed-in owner (`auth.uid() = user_id`) can create or update their own row.
 - `training_posts` — the "looking for a partner" listings (sport, focus, skill level), each owned
-  by a profile. Publicly readable; only the owning profile's user can create or delete their own
-  listings. A profile can have any number of active listings.
+  by a profile. Publicly readable; only the owning profile's user can create, update, or delete
+  their own listings. A profile can have any number of active listings.
 - `profiles.lat` / `profiles.lng` — geocoded (via free OpenStreetMap/Nominatim lookup, once at
   signup) from the city/state you enter. Powers real distance display and nearest-first sorting in
   Browse; if geocoding fails, signup still succeeds, that profile just won't show a distance.
@@ -87,9 +88,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Project structure
 
 - `src/app/` — pages: landing (`/`), browse/matching (`/browse`), profile detail
-  (`/profile/[id]`), your own profile redirect (`/profile/me`), manage your listings
-  (`/listings`), signup (`/signup`), login (`/login`), pending requests inbox (`/requests`),
-  conversation list (`/messages`), chat thread (`/messages/[id]`)
+  (`/profile/[id]`), your own profile redirect (`/profile/me`), edit your profile
+  (`/profile/edit`), manage your listings (`/listings`), signup (`/signup`), login (`/login`),
+  pending requests inbox (`/requests`), conversation list (`/messages`), chat thread
+  (`/messages/[id]`)
 - `src/components/` — shared UI (header, listing grid/cards, filters, signup/login forms, request
   button, safety banner)
 - `src/lib/` — types, Supabase client, auth session hook, and profile/post/request/message queries

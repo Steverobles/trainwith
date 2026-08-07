@@ -80,7 +80,11 @@ export default function RequestButton({
   }
 
   if (myProfileId === toProfileId) {
-    return <p className={`${buttonClass} cursor-default bg-gray-100 text-gray-500`}>This is your profile</p>;
+    return (
+      <Link href="/profile/edit" className={`${buttonClass} block bg-gray-950 text-white hover:bg-gray-800`}>
+        Edit profile
+      </Link>
+    );
   }
 
   if (status === "pending") {
