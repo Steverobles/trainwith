@@ -19,6 +19,8 @@ export interface Profile {
   ageBand: AgeBand;
   city: string;
   state: string;
+  lat: number | null;
+  lng: number | null;
   bio: string;
   initials: string;
   guardianVerified?: boolean; // only meaningful for minor age bands

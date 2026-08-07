@@ -35,6 +35,8 @@ interface PostWithProfileRow extends PostRow {
     age_band: Profile["ageBand"];
     city: string;
     state: string;
+    lat: number | null;
+    lng: number | null;
     bio: string;
     guardian_verified: boolean;
     user_id: string | null;
@@ -48,7 +50,7 @@ export async function listPostsWithProfiles(filters: {
   let query = supabase
     .from("training_posts")
     .select(
-      `${POST_COLUMNS}, profiles!inner (id, name, age_band, city, state, bio, guardian_verified, user_id)`
+      `${POST_COLUMNS}, profiles!inner (id, name, age_band, city, state, lat, lng, bio, guardian_verified, user_id)`
     )
     .order("created_at", { ascending: false });
 
@@ -72,6 +74,8 @@ export async function listPostsWithProfiles(filters: {
       ageBand: row.profiles.age_band,
       city: row.profiles.city,
       state: row.profiles.state,
+      lat: row.profiles.lat,
+      lng: row.profiles.lng,
       bio: row.profiles.bio,
       initials: getInitials(row.profiles.name),
       guardianVerified: row.profiles.guardian_verified,
@@ -109,4 +113,10 @@ export async function createPost(input: {
 export async function deletePost(postId: string): Promise<void> {
   const { error } = await supabase.from("training_posts").delete().eq("id", postId);
   if (error) throw error;
+}
+
+export async function countActivePosts(): Promise<number> {
+  const { count, error } = await supabase.from("training_posts").select("id", { count: "exact", head: true });
+  if (error) throw error;
+  return count ?? 0;
 }

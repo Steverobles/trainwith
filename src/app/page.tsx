@@ -1,8 +1,11 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import SafetyBanner from "@/components/SafetyBanner";
+import { countActivePosts } from "@/lib/posts";
 
-export default function Home() {
+export default async function Home() {
+  const postCount = await countActivePosts();
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       <Header />
@@ -19,7 +22,9 @@ export default function Home() {
         <section className="text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-            Now matching in Austin, TX
+            {postCount > 0
+              ? `${postCount} open listing${postCount === 1 ? "" : "s"} right now`
+              : "Be the first to post a listing"}
           </span>
 
           <h1 className="mt-5 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">

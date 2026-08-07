@@ -3,7 +3,13 @@ import { isMinorAgeBand } from "@/lib/types";
 import { PostWithProfile } from "@/lib/posts";
 import { sportStyles } from "@/lib/sport-style";
 
-export default function PostCard({ post }: { post: PostWithProfile }) {
+export default function PostCard({
+  post,
+  distanceMiles,
+}: {
+  post: PostWithProfile;
+  distanceMiles?: number | null;
+}) {
   const { profile } = post;
   const minor = isMinorAgeBand(profile.ageBand);
   const style = sportStyles[post.sport];
@@ -27,9 +33,16 @@ export default function PostCard({ post }: { post: PostWithProfile }) {
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold text-gray-900 group-hover:text-blue-600">
-              {profile.name}
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="truncate font-semibold text-gray-900 group-hover:text-blue-600">
+                {profile.name}
+              </p>
+              {distanceMiles != null && (
+                <span className="shrink-0 rounded-full bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-500">
+                  {distanceMiles < 1 ? "<1 mi" : `${Math.round(distanceMiles)} mi`}
+                </span>
+              )}
+            </div>
             <p className="text-xs text-gray-500">
               Age {profile.ageBand} · {profile.city}, {profile.state}
             </p>

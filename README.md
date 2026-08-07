@@ -11,8 +11,9 @@ Profile and "what I'm looking for" are deliberately separate: your **profile** i
 you can have several at once, and Browse shows listings, not people directly. Sending a training
 request still connects two *people*, and once accepted it becomes a conversation on the Messages
 tab. Requests and Messages are deliberately separate too: Requests is just the pending
-accept/decline inbox, Messages is where your actual connections live. Guardian contact info for
-minors is write-only (see below).
+accept/decline inbox, Messages is where your actual connections live. Your city/state is geocoded
+into real coordinates at signup, so Browse can show actual distance and sort nearest-first.
+Guardian contact info for minors is write-only (see below).
 
 ## Requirements
 
@@ -31,8 +32,9 @@ minors is write-only (see below).
 2. Create a Supabase project, then run [`supabase-schema.sql`](./supabase-schema.sql),
    [`supabase-schema-2-auth.sql`](./supabase-schema-2-auth.sql),
    [`supabase-schema-3-messages.sql`](./supabase-schema-3-messages.sql),
-   [`supabase-schema-4-message-reads.sql`](./supabase-schema-4-message-reads.sql), and
-   [`supabase-schema-5-listings.sql`](./supabase-schema-5-listings.sql) in order in its **SQL
+   [`supabase-schema-4-message-reads.sql`](./supabase-schema-4-message-reads.sql),
+   [`supabase-schema-5-listings.sql`](./supabase-schema-5-listings.sql), and
+   [`supabase-schema-6-location.sql`](./supabase-schema-6-location.sql) in order in its **SQL
    Editor** to create the tables, row-level security policies, and seed demo profiles.
 
    For faster local testing, also turn off **Confirm email** under
@@ -60,6 +62,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - `training_posts` — the "looking for a partner" listings (sport, focus, skill level), each owned
   by a profile. Publicly readable; only the owning profile's user can create or delete their own
   listings. A profile can have any number of active listings.
+- `profiles.lat` / `profiles.lng` — geocoded (via free OpenStreetMap/Nominatim lookup, once at
+  signup) from the city/state you enter. Powers real distance display and nearest-first sorting in
+  Browse; if geocoding fails, signup still succeeds, that profile just won't show a distance.
 - `guardian_contacts` — insert-only. There is no `SELECT` policy, so parent/guardian name and
   email can never be read back through the public API key, even though the app can save them
   during signup for minors.

@@ -1,7 +1,8 @@
 import { supabase } from "./supabase";
+import { geocodeCityState } from "./geocode";
 import { AgeBand, Profile } from "./types";
 
-const SELECT_COLUMNS = "id, name, age_band, city, state, bio, guardian_verified, user_id";
+const SELECT_COLUMNS = "id, name, age_band, city, state, lat, lng, bio, guardian_verified, user_id";
 
 export function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -16,6 +17,8 @@ interface ProfileRow {
   age_band: AgeBand;
   city: string;
   state: string;
+  lat: number | null;
+  lng: number | null;
   bio: string;
   guardian_verified: boolean;
   user_id: string | null;
@@ -28,6 +31,8 @@ function rowToProfile(row: ProfileRow): Profile {
     ageBand: row.age_band,
     city: row.city,
     state: row.state,
+    lat: row.lat,
+    lng: row.lng,
     bio: row.bio,
     initials: getInitials(row.name),
     guardianVerified: row.guardian_verified,
@@ -91,6 +96,8 @@ export async function signUpAndCreateProfile(input: {
     throw new Error("Check your email to confirm your account before your profile can be created.");
   }
 
+  const coords = await geocodeCityState(input.city, input.state);
+
   const { data, error } = await supabase
     .from("profiles")
     .insert({
@@ -99,6 +106,8 @@ export async function signUpAndCreateProfile(input: {
       age_band: input.ageBand,
       city: input.city,
       state: input.state,
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
       bio: input.bio,
     })
     .select("id")
