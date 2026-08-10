@@ -25,15 +25,15 @@ export default async function Home() {
           </span>
 
           <h1 className="mt-5 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">
-            Find your{" "}
+            Not a class. Not a team.{" "}
             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              training partner.
+              Just you and a partner.
             </span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-gray-600">
-            Long toss, bullpen sessions, shooting reps, baseline rallies — the best training
-            happens with a partner. TrainWith matches you with people nearby who are working on
-            the same thing.
+            TrainWith matches you with one or two people nearby chasing the same goal — so you can
+            get outside and put in the work together, without the pressure of a big class or a
+            crowded gym.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -68,18 +68,20 @@ export default async function Home() {
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">
               2
             </div>
-            <p className="mt-3 text-sm font-semibold text-gray-900">Get matched nearby</p>
+            <p className="mt-3 text-sm font-semibold text-gray-900">Match with a real person</p>
             <p className="mt-1 text-sm text-gray-600">
-              Browse people close to you chasing the same goal, at a similar age and skill level.
+              Not a class roster — one or two people near you chasing the exact same goal, at a
+              similar age and skill level.
             </p>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
               3
             </div>
-            <p className="mt-3 text-sm font-semibold text-gray-900">Meet up and train</p>
+            <p className="mt-3 text-sm font-semibold text-gray-900">Get outside and train</p>
             <p className="mt-1 text-sm text-gray-600">
-              Head to a local field or court, get your reps in, and build a friendship out of it.
+              Head to a local field, court, or trail. Get your reps in, build a routine, and make
+              a friend out of it.
             </p>
           </div>
         </section>

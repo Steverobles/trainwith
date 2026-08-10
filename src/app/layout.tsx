@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TrainWith — Find your training partner",
-  description: "Match with nearby athletes working on the same skills, and train together.",
+  description:
+    "Skip the big class and the crowded gym. Match with one or two people nearby working toward the same goal and get outside to train together.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
