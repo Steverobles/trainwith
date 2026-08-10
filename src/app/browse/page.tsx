@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Header from "@/components/Header";
 import BrowseFilters from "@/components/BrowseFilters";
 import PostGrid from "@/components/PostGrid";
 import SafetyBanner from "@/components/SafetyBanner";
@@ -19,8 +18,6 @@ export default async function Browse({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <main className="mx-auto max-w-5xl px-4 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">

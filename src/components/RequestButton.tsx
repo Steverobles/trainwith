@@ -7,7 +7,7 @@ import { getMyProfile } from "@/lib/profiles";
 import { getRequestBetween, sendTrainingRequest, RequestListItem } from "@/lib/requests";
 
 const buttonClass =
-  "mt-6 w-full rounded-full px-5 py-3 text-center text-sm font-semibold shadow-sm transition-transform";
+  "mt-6 w-full rounded-full px-5 py-3 text-center text-sm font-semibold shadow-sm transition-transform active:scale-[0.97]";
 
 export default function RequestButton({
   toProfileId,

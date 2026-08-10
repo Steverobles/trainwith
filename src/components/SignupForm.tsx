@@ -186,7 +186,7 @@ export default function SignupForm() {
                 required
                 value={guardianName}
                 onChange={(e) => setGuardianName(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                className="mt-1 w-full rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
               />
             </div>
             <div>
@@ -196,7 +196,7 @@ export default function SignupForm() {
                 type="email"
                 value={guardianEmail}
                 onChange={(e) => setGuardianEmail(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                className="mt-1 w-full rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
               />
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function SignupForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
+        className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.97] disabled:opacity-60"
       >
         {submitting ? "Creating profile…" : "Create profile"}
       </button>

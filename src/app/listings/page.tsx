@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile } from "@/lib/profiles";
 import { listPostsByProfile, createPost, updatePost, deletePost } from "@/lib/posts";
@@ -73,8 +72,6 @@ export default function Listings() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <main className="mx-auto max-w-2xl px-4 py-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
@@ -86,7 +83,7 @@ export default function Listings() {
           {myProfileId && !showForm && (
             <button
               onClick={() => setShowForm(true)}
-              className="self-start rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 hover:shadow-md sm:shrink-0"
+              className="self-start rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform hover:shadow-md active:scale-[0.97] sm:shrink-0"
             >
               + New listing
             </button>
@@ -150,7 +147,7 @@ export default function Listings() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 disabled:opacity-60"
+                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform active:scale-[0.97] disabled:opacity-60"
               >
                 {submitting ? "Posting…" : "Post listing"}
               </button>
@@ -258,7 +255,7 @@ function ListingRow({
             <button
               type="submit"
               disabled={saving}
-              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-semibold text-white disabled:opacity-60"
+              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-semibold text-white transition-transform active:scale-[0.97] disabled:opacity-60"
             >
               {saving ? "Saving…" : "Save"}
             </button>

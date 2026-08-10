@@ -1,11 +1,8 @@
-import Header from "@/components/Header";
 import SignupForm from "@/components/SignupForm";
 
 export default function Signup() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <main className="mx-auto max-w-md px-4 py-10">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold tracking-tight text-gray-950">Create your profile</h1>

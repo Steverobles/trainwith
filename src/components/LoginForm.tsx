@@ -59,7 +59,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
+        className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.97] disabled:opacity-60"
       >
         {submitting ? "Logging in…" : "Log in"}
       </button>

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { getRequestById } from "@/lib/requests";
@@ -99,8 +98,6 @@ export default function MessageThread() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <Header />
-
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-6">
         <Link href="/messages" className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-800">
           ← Back to messages
@@ -173,12 +170,12 @@ export default function MessageThread() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Message…"
-                className="flex-1 rounded-full border border-gray-200 px-4 py-2.5 text-sm outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                className="flex-1 rounded-full border border-gray-200 px-4 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="submit"
                 disabled={sending || !text.trim()}
-                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 disabled:opacity-60"
+                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform active:scale-[0.97] disabled:opacity-60"
               >
                 Send
               </button>

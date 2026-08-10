@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Header from "@/components/Header";
 import SafetyBanner from "@/components/SafetyBanner";
 import { countActivePosts } from "@/lib/posts";
 
@@ -8,8 +7,6 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <Header />
-
       <main className="relative mx-auto w-full max-w-5xl flex-1 px-4 py-16 sm:py-20">
         <div
           aria-hidden
@@ -41,7 +38,7 @@ export default async function Home() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/browse"
-              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg"
+              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.97]"
             >
               Browse training partners
             </Link>

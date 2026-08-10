@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { listMyRequests, respondToRequest, RequestListItem } from "@/lib/requests";
@@ -69,8 +68,6 @@ export default function Requests() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <main className="mx-auto max-w-2xl px-4 py-8">
         <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">Requests</h1>
         <p className="mt-1 text-sm text-gray-600">
@@ -192,7 +189,7 @@ function RequestRow({
             <button
               onClick={onAccept}
               disabled={responding}
-              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-600/20 hover:shadow-md disabled:opacity-60"
+              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform hover:shadow-md active:scale-[0.97] disabled:opacity-60"
             >
               Accept
             </button>

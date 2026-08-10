@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth";
 import { getMyProfile } from "@/lib/profiles";
-import { countPendingIncoming, listMyRequests } from "@/lib/requests";
+import { listMyRequests } from "@/lib/requests";
 import { countUnreadMessages } from "@/lib/messages";
 
 function NavBadge({ count }: { count: number }) {
@@ -25,6 +25,7 @@ const mobileNavLinkClass =
 export default function Header() {
   const { session, loading } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [pendingCount, setPendingCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,17 +37,20 @@ export default function Header() {
       const profile = await getMyProfile();
       if (!profile) return;
 
-      const [pending, allRequests] = await Promise.all([
-        countPendingIncoming(profile.id),
-        listMyRequests(profile.id),
-      ]);
+      const allRequests = await listMyRequests(profile.id);
+      const pending = allRequests.filter(
+        (r) => r.direction === "incoming" && r.status === "pending"
+      ).length;
       const acceptedIds = allRequests.filter((r) => r.status === "accepted").map((r) => r.id);
       const unread = await countUnreadMessages(profile.id, acceptedIds);
 
       setPendingCount(pending);
       setUnreadCount(unread);
     })();
-  }, [session, loading]);
+    // Header now lives in the persistent root layout (doesn't remount per
+    // page), so refetch explicitly on route change to keep badges current —
+    // this used to happen for free via remounting.
+  }, [session, loading, pathname]);
 
   async function handleSignOut() {
     await signOut();

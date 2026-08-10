@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Header from "@/components/Header";
 import SafetyBanner from "@/components/SafetyBanner";
 import RequestButton from "@/components/RequestButton";
 import { getProfile } from "@/lib/profiles";
@@ -22,8 +21,6 @@ export default async function ProfileDetail({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <main className="mx-auto max-w-2xl px-4 py-8">
         <Link
           href="/browse"

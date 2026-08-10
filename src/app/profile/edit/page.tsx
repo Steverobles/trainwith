@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/Header";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, updateProfile } from "@/lib/profiles";
 
@@ -69,8 +68,6 @@ export default function EditProfile() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <main className="mx-auto max-w-md px-4 py-8">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold tracking-tight text-gray-950">Edit profile</h1>
@@ -157,7 +154,7 @@ export default function EditProfile() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 disabled:opacity-60"
+                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform active:scale-[0.97] disabled:opacity-60"
               >
                 {submitting ? "Saving…" : "Save changes"}
               </button>
