@@ -2,12 +2,19 @@ export type AgeBand = "13-15" | "16-17" | "18-24" | "25-34" | "35+";
 
 export type Sport =
   | "Baseball"
-  | "Softball"
   | "Basketball"
+  | "Cycling"
   | "Football"
+  | "Golf"
+  | "Pickleball"
+  | "Running"
   | "Soccer"
+  | "Softball"
+  | "Swimming"
   | "Tennis"
-  | "Track & Field";
+  | "Track & Field"
+  | "Volleyball"
+  | "Weightlifting";
 
 export type SkillLevel = "Just starting" | "Rec / casual" | "Competitive" | "Varsity+";
 

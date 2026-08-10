@@ -2,7 +2,9 @@
 
 Find your training partner. TrainWith matches people nearby who are working on the same sport,
 drill, and skill level — long toss, bullpen sessions, shooting reps, baseline rallies — so
-training is easier to stick with and more fun to show up for.
+training is easier to stick with and more fun to show up for. Covers 14 sports/activities (see
+`Sport` in [`src/lib/types.ts`](./src/lib/types.ts)), including running, weightlifting, pickleball,
+golf, swimming, cycling, and volleyball alongside the traditional team sports.
 
 Profiles and matching are backed by a real Supabase (Postgres) database with real accounts.
 Profile and "what I'm looking for" are deliberately separate: your **profile** is your identity

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useSession } from "@/lib/auth";
 import { getMyProfile } from "@/lib/profiles";
 import { listPostsByProfile, createPost, updatePost, deletePost } from "@/lib/posts";
@@ -10,12 +11,19 @@ import { sportStyles } from "@/lib/sport-style";
 
 const sports: Sport[] = [
   "Baseball",
-  "Softball",
   "Basketball",
+  "Cycling",
   "Football",
+  "Golf",
+  "Pickleball",
+  "Running",
   "Soccer",
+  "Softball",
+  "Swimming",
   "Tennis",
   "Track & Field",
+  "Volleyball",
+  "Weightlifting",
 ];
 const skillLevels: SkillLevel[] = ["Just starting", "Rec / casual", "Competitive", "Varsity+"];
 
@@ -24,11 +32,20 @@ const inputClass =
 const labelClass = "block text-sm font-medium text-gray-700";
 
 export default function Listings() {
+  return (
+    <Suspense fallback={null}>
+      <ListingsInner />
+    </Suspense>
+  );
+}
+
+function ListingsInner() {
+  const searchParams = useSearchParams();
   const { session, loading: sessionLoading } = useSession();
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
   const [posts, setPosts] = useState<TrainingPost[]>([]);
   const [ready, setReady] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(searchParams.get("new") === "1");
 
   const [sport, setSport] = useState<Sport>("Baseball");
   const [focus, setFocus] = useState("");
@@ -105,7 +122,7 @@ export default function Listings() {
           </div>
         )}
 
-        {showForm && (
+        {showForm && myProfileId && (
           <form onSubmit={onCreate} className="mt-6 space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>

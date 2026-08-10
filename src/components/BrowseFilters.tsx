@@ -5,12 +5,19 @@ import { Sport } from "@/lib/types";
 
 const sports: Sport[] = [
   "Baseball",
-  "Softball",
   "Basketball",
+  "Cycling",
   "Football",
+  "Golf",
+  "Pickleball",
+  "Running",
   "Soccer",
+  "Softball",
+  "Swimming",
   "Tennis",
   "Track & Field",
+  "Volleyball",
+  "Weightlifting",
 ];
 
 const poolOptions = [

@@ -50,4 +50,46 @@ export const sportStyles: Record<Sport, SportStyle> = {
     accent: "from-purple-500 to-fuchsia-500",
     icon: "🏃",
   },
+  Running: {
+    badge: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/10",
+    avatar: "bg-amber-100 text-amber-700",
+    accent: "from-amber-500 to-orange-400",
+    icon: "👟",
+  },
+  Weightlifting: {
+    badge: "bg-slate-50 text-slate-700 ring-1 ring-inset ring-slate-600/10",
+    avatar: "bg-slate-100 text-slate-700",
+    accent: "from-slate-500 to-gray-600",
+    icon: "🏋️",
+  },
+  Pickleball: {
+    badge: "bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/10",
+    avatar: "bg-yellow-100 text-yellow-700",
+    accent: "from-yellow-400 to-amber-500",
+    icon: "🏓",
+  },
+  Golf: {
+    badge: "bg-teal-50 text-teal-700 ring-1 ring-inset ring-teal-600/10",
+    avatar: "bg-teal-100 text-teal-700",
+    accent: "from-teal-500 to-emerald-500",
+    icon: "⛳",
+  },
+  Volleyball: {
+    badge: "bg-fuchsia-50 text-fuchsia-700 ring-1 ring-inset ring-fuchsia-600/10",
+    avatar: "bg-fuchsia-100 text-fuchsia-700",
+    accent: "from-fuchsia-500 to-pink-500",
+    icon: "🏐",
+  },
+  Swimming: {
+    badge: "bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-600/10",
+    avatar: "bg-sky-100 text-sky-700",
+    accent: "from-sky-500 to-blue-500",
+    icon: "🏊",
+  },
+  Cycling: {
+    badge: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/10",
+    avatar: "bg-green-100 text-green-700",
+    accent: "from-green-600 to-teal-500",
+    icon: "🚴",
+  },
 };

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import BrowseFilters from "@/components/BrowseFilters";
 import PostGrid from "@/components/PostGrid";
 import SafetyBanner from "@/components/SafetyBanner";
+import NewListingButton from "@/components/NewListingButton";
 import { listPostsWithProfiles } from "@/lib/posts";
 import { Sport } from "@/lib/types";
 
@@ -19,13 +20,16 @@ export default async function Browse({
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
-            Training partners near you
-          </h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Browse athletes looking for a training partner. Filter by sport or age group.
-          </p>
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
+              Training partners near you
+            </h1>
+            <p className="mt-1 text-sm text-gray-600">
+              Browse athletes looking for a training partner. Filter by sport or age group.
+            </p>
+          </div>
+          <NewListingButton />
         </div>
 
         <Suspense fallback={null}>
