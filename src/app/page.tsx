@@ -25,9 +25,9 @@ export default async function Home() {
           </span>
 
           <h1 className="mt-5 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">
-            Not a class. Not a team.{" "}
+            Find your{" "}
             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Just you and a partner.
+              training partner.
             </span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-gray-600">
