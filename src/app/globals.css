@@ -39,3 +39,15 @@ body {
 .page-transition {
   animation: fade-in 220ms ease-out;
 }
+
+/* iOS Safari auto-zooms the page when focusing any input/textarea/select
+   with a font-size under 16px — this is what caused the "zooms in when I
+   tap to type" issue. Most of the app's form controls use text-sm (14px),
+   so bump them to 16px at mobile widths only, leaving desktop untouched. */
+@media (max-width: 640px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
