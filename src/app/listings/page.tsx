@@ -298,12 +298,12 @@ function ListingRow({
     <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
       <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
       <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+          <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
             <span>{style.icon}</span>
             {post.sport}
           </span>
-          <p className="text-sm font-medium text-gray-900">{post.focus}</p>
+          <p className="min-w-0 break-words text-sm font-medium text-gray-900">{post.focus}</p>
           <span className="shrink-0 rounded-full bg-gray-50 px-2 py-0.5 text-xs text-gray-500 ring-1 ring-inset ring-gray-200">
             {post.skillLevel}
           </span>

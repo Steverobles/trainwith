@@ -52,7 +52,7 @@ export default async function ProfileDetail({
             </div>
 
             {profile.bio && (
-              <p className="mt-4 text-sm leading-relaxed text-gray-700">{profile.bio}</p>
+              <p className="mt-4 break-words text-sm leading-relaxed text-gray-700">{profile.bio}</p>
             )}
 
             <RequestButton toProfileId={profile.id} toProfileHasOwner={profile.userId !== null} />
@@ -70,13 +70,13 @@ export default async function ProfileDetail({
                 return (
                   <div key={p.id} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                     <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
-                    <div className="flex flex-wrap items-center gap-1.5 p-4">
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+                    <div className="flex min-w-0 flex-wrap items-center gap-1.5 p-4">
+                      <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
                         <span>{style.icon}</span>
                         {p.sport}
                       </span>
-                      <span className="text-sm font-medium text-gray-900">{p.focus}</span>
-                      <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
+                      <span className="min-w-0 break-words text-sm font-medium text-gray-900">{p.focus}</span>
+                      <span className="shrink-0 rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
                         {p.skillLevel}
                       </span>
                     </div>

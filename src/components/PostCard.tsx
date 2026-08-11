@@ -49,15 +49,15 @@ export default function PostCard({
           </div>
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
+        <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
+          <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
             <span>{style.icon}</span>
             {post.sport}
           </span>
-          <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
+          <span className="min-w-0 break-words rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
             {post.focus}
           </span>
-          <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
+          <span className="shrink-0 rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
             {post.skillLevel}
           </span>
         </div>

@@ -149,10 +149,10 @@ export default function MessageThread() {
                 {messages.map((m) => {
                   const mine = m.senderProfileId === myProfileId;
                   return (
-                    <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                    <div key={m.id} className={`flex min-w-0 ${mine ? "justify-end" : "justify-start"}`}>
                       <div
                         title={new Date(m.createdAt).toLocaleString()}
-                        className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
+                        className={`max-w-[75%] break-words rounded-2xl px-3.5 py-2 text-sm ${
                           mine ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
                         }`}
                       >
