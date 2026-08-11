@@ -23,6 +23,7 @@ export default function MessageThread() {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (sessionLoading || !session) return;
@@ -81,8 +82,14 @@ export default function MessageThread() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
 
-  async function onSend(e: React.FormEvent) {
-    e.preventDefault();
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+  }, [text]);
+
+  async function handleSend() {
     const body = text.trim();
     if (!myProfileId || !body) return;
     setSending(true);
@@ -93,6 +100,18 @@ export default function MessageThread() {
       setMessages(msgs);
     } finally {
       setSending(false);
+    }
+  }
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    handleSend();
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   }
 
@@ -165,17 +184,20 @@ export default function MessageThread() {
               </div>
             </div>
 
-            <form onSubmit={onSend} className="mt-3 flex gap-2">
-              <input
+            <form onSubmit={onSubmit} className="mt-3 flex items-end gap-2">
+              <textarea
+                ref={textareaRef}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
+                onKeyDown={onKeyDown}
                 placeholder="Message…"
-                className="flex-1 rounded-full border border-gray-200 px-4 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                rows={1}
+                className="max-h-32 flex-1 resize-none break-words rounded-2xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="submit"
                 disabled={sending || !text.trim()}
-                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform active:scale-[0.97] disabled:opacity-60"
+                className="shrink-0 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform active:scale-[0.97] disabled:opacity-60"
               >
                 Send
               </button>
