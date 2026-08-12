@@ -16,10 +16,20 @@ export async function sendTrainingRequest(
   toProfileId: string,
   message?: string
 ): Promise<void> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("training_requests")
-    .insert({ from_profile_id: fromProfileId, to_profile_id: toProfileId, message: message?.trim() || null });
+    .insert({ from_profile_id: fromProfileId, to_profile_id: toProfileId, message: message?.trim() || null })
+    .select("id")
+    .single();
   if (error) throw error;
+
+  // Best-effort: the request still exists if this fails, just without an
+  // email nudge. Don't block the UI on it.
+  fetch("/api/notify/new-request", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ requestId: data.id }),
+  }).catch(() => {});
 }
 
 export async function respondToRequest(requestId: string, status: "accepted" | "declined"): Promise<void> {

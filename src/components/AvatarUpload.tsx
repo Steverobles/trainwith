@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { uploadAvatar, removeAvatar } from "@/lib/profiles";
+import { resizeImageFile } from "@/lib/image";
 
 export default function AvatarUpload({
   profileId,
@@ -25,7 +26,8 @@ export default function AvatarUpload({
     setUploading(true);
     setError(null);
     try {
-      const url = await uploadAvatar(file);
+      const resized = await resizeImageFile(file);
+      const url = await uploadAvatar(resized);
       onChange(url);
     } catch {
       setError("Couldn't upload that photo. Please try again.");
