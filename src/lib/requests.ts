@@ -52,6 +52,37 @@ export async function getRequestBetween(
   };
 }
 
+export async function getRequestsForProfiles(
+  myProfileId: string,
+  otherProfileIds: string[]
+): Promise<Record<string, RequestListItem>> {
+  if (otherProfileIds.length === 0) return {};
+
+  const ids = otherProfileIds.join(",");
+  const { data, error } = await supabase
+    .from("training_requests")
+    .select("id, status, created_at, from_profile_id, to_profile_id, message")
+    .or(
+      `and(from_profile_id.eq.${myProfileId},to_profile_id.in.(${ids})),and(to_profile_id.eq.${myProfileId},from_profile_id.in.(${ids}))`
+    );
+
+  if (error) throw error;
+
+  const map: Record<string, RequestListItem> = {};
+  for (const r of data ?? []) {
+    const counterpartId = r.from_profile_id === myProfileId ? r.to_profile_id : r.from_profile_id;
+    map[counterpartId] = {
+      id: r.id,
+      status: r.status as RequestStatus,
+      createdAt: r.created_at,
+      direction: r.from_profile_id === myProfileId ? "outgoing" : "incoming",
+      counterpartProfileId: counterpartId,
+      message: r.message,
+    };
+  }
+  return map;
+}
+
 export interface RequestDetail {
   id: string;
   status: RequestStatus;

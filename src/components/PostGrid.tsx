@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import PostCard from "./PostCard";
+import RequestModal from "./RequestModal";
 import { useSession } from "@/lib/auth";
 import { getMyProfile } from "@/lib/profiles";
 import { PostWithProfile } from "@/lib/posts";
 import { milesBetween } from "@/lib/distance";
+import { getRequestsForProfiles, RequestListItem, RequestStatus } from "@/lib/requests";
 
 const distanceOptions = [
   { label: "Any distance", value: "" },
@@ -20,6 +22,8 @@ export default function PostGrid({ posts }: { posts: PostWithProfile[] }) {
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
   const [myCoords, setMyCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [maxDistance, setMaxDistance] = useState("");
+  const [requestsByProfile, setRequestsByProfile] = useState<Record<string, RequestListItem>>({});
+  const [modalTarget, setModalTarget] = useState<PostWithProfile | null>(null);
 
   useEffect(() => {
     if (loading || !session) return;
@@ -57,6 +61,16 @@ export default function PostGrid({ posts }: { posts: PostWithProfile[] }) {
     return filtered;
   }, [posts, myProfileId, myCoords, maxDistance]);
 
+  const visibleProfileIds = useMemo(
+    () => results.map((r) => r.post.profile.id).join(","),
+    [results]
+  );
+
+  useEffect(() => {
+    if (!myProfileId || !visibleProfileIds) return;
+    getRequestsForProfiles(myProfileId, visibleProfileIds.split(",")).then(setRequestsByProfile);
+  }, [myProfileId, visibleProfileIds]);
+
   return (
     <div>
       {myCoords && (
@@ -77,7 +91,15 @@ export default function PostGrid({ posts }: { posts: PostWithProfile[] }) {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {results.map((r) => (
-          <PostCard key={r.post.id} post={r.post} distanceMiles={r.distanceMiles} />
+          <PostCard
+            key={r.post.id}
+            post={r.post}
+            distanceMiles={r.distanceMiles}
+            myProfileId={myProfileId}
+            loggedIn={!!session}
+            existingRequest={requestsByProfile[r.post.profile.id]}
+            onRequestClick={() => setModalTarget(r.post)}
+          />
         ))}
       </div>
 
@@ -85,6 +107,29 @@ export default function PostGrid({ posts }: { posts: PostWithProfile[] }) {
         <div className="mt-6 rounded-2xl border border-dashed border-gray-200 bg-white/60 p-6 text-center text-sm text-gray-400">
           No listings within {maxDistance} mi. Try widening your search.
         </div>
+      )}
+
+      {modalTarget && myProfileId && (
+        <RequestModal
+          myProfileId={myProfileId}
+          toProfileId={modalTarget.profile.id}
+          toProfileName={modalTarget.profile.name}
+          onClose={() => setModalTarget(null)}
+          onSent={() => {
+            setRequestsByProfile((prev) => ({
+              ...prev,
+              [modalTarget.profile.id]: {
+                id: "",
+                status: "pending" as RequestStatus,
+                createdAt: new Date().toISOString(),
+                direction: "outgoing",
+                counterpartProfileId: modalTarget.profile.id,
+                message: null,
+              },
+            }));
+            setModalTarget(null);
+          }}
+        />
       )}
     </div>
   );
