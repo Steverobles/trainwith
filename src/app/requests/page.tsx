@@ -164,47 +164,55 @@ function RequestRow({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-      <div className="flex items-center justify-between gap-3 p-4">
-        <div className="flex min-w-0 items-center gap-3">
-          {profile && (
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
-              {profile.initials}
+      <div className="flex flex-col gap-3 p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            {profile && (
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                {profile.initials}
+              </div>
+            )}
+            <div className="min-w-0">
+              <Link
+                href={profile ? `/profile/${profile.id}` : "#"}
+                className="truncate font-semibold text-gray-900 hover:text-blue-600"
+              >
+                {profile?.name ?? "Unknown athlete"}
+              </Link>
+              <p className="text-xs text-gray-500">
+                {profile?.city}, {profile?.state}
+              </p>
             </div>
-          )}
-          <div className="min-w-0">
-            <Link
-              href={profile ? `/profile/${profile.id}` : "#"}
-              className="truncate font-semibold text-gray-900 hover:text-blue-600"
-            >
-              {profile?.name ?? "Unknown athlete"}
-            </Link>
-            <p className="text-xs text-gray-500">
-              {profile?.city}, {profile?.state}
-            </p>
           </div>
+
+          {onAccept && onDecline && request.status === "pending" ? (
+            <div className="flex shrink-0 gap-2">
+              <button
+                onClick={onAccept}
+                disabled={responding}
+                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform hover:shadow-md active:scale-[0.97] disabled:opacity-60"
+              >
+                Accept
+              </button>
+              <button
+                onClick={onDecline}
+                disabled={responding}
+                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+              >
+                Decline
+              </button>
+            </div>
+          ) : (
+            <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
+              {request.status === "declined" ? "Declined" : "Pending"}
+            </span>
+          )}
         </div>
 
-        {onAccept && onDecline && request.status === "pending" ? (
-          <div className="flex shrink-0 gap-2">
-            <button
-              onClick={onAccept}
-              disabled={responding}
-              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform hover:shadow-md active:scale-[0.97] disabled:opacity-60"
-            >
-              Accept
-            </button>
-            <button
-              onClick={onDecline}
-              disabled={responding}
-              className="rounded-full border border-gray-300 px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
-            >
-              Decline
-            </button>
-          </div>
-        ) : (
-          <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
-            {request.status === "declined" ? "Declined" : "Pending"}
-          </span>
+        {request.message && (
+          <p className="min-w-0 break-words rounded-xl bg-gray-50 px-3 py-2 text-sm text-gray-700">
+            “{request.message}”
+          </p>
         )}
       </div>
     </div>

@@ -17,6 +17,7 @@ export default function MessageThread() {
 
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
   const [counterpart, setCounterpart] = useState<Profile | null>(null);
+  const [requestNote, setRequestNote] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [ready, setReady] = useState(false);
   const [notAllowed, setNotAllowed] = useState(false);
@@ -52,6 +53,7 @@ export default function MessageThread() {
       const counterparts = await getProfilesByIds([counterpartId]);
       if (cancelled) return;
       setCounterpart(counterparts[0] ?? null);
+      setRequestNote(request.message);
 
       const msgs = await listMessages(id);
       if (cancelled) return;
@@ -160,6 +162,14 @@ export default function MessageThread() {
               )}
 
               <div className="flex min-h-80 flex-1 flex-col gap-2 overflow-y-auto p-4">
+                {requestNote && (
+                  <div className="mb-1 rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-900">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">
+                      Original request
+                    </p>
+                    <p className="mt-0.5 min-w-0 break-words">“{requestNote}”</p>
+                  </div>
+                )}
                 {messages.length === 0 && (
                   <div className="flex flex-1 items-center justify-center">
                     <p className="text-sm text-gray-400">Say hey and set up your first session.</p>

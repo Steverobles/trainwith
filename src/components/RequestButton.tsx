@@ -22,6 +22,7 @@ export default function RequestButton({
   const [profileLoading, setProfileLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     if (sessionLoading || !session) return;
@@ -46,13 +47,14 @@ export default function RequestButton({
     setSending(true);
     setError(null);
     try {
-      await sendTrainingRequest(myProfileId, toProfileId);
+      await sendTrainingRequest(myProfileId, toProfileId, note);
       setExisting({
         id: "",
         status: "pending",
         createdAt: new Date().toISOString(),
         direction: "outgoing",
         counterpartProfileId: toProfileId,
+        message: note.trim() || null,
       });
     } catch {
       setError("Couldn't send that request. Please try again.");
@@ -105,12 +107,19 @@ export default function RequestButton({
   }
 
   return (
-    <div>
+    <div className="mt-6">
+      <textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="Add a note (optional) — e.g. “saw you're also working on baseline rallying, want to hit this week?”"
+        rows={2}
+        className="w-full resize-none rounded-2xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+      />
       <button
         type="button"
         onClick={onRequest}
         disabled={sending}
-        className={`${buttonClass} w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-600/20 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60`}
+        className="mt-2 w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.97] disabled:opacity-60"
       >
         {sending ? "Sending…" : "Request to train together"}
       </button>

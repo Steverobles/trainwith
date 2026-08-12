@@ -8,12 +8,17 @@ export interface RequestListItem {
   createdAt: string;
   direction: "incoming" | "outgoing";
   counterpartProfileId: string;
+  message: string | null;
 }
 
-export async function sendTrainingRequest(fromProfileId: string, toProfileId: string): Promise<void> {
+export async function sendTrainingRequest(
+  fromProfileId: string,
+  toProfileId: string,
+  message?: string
+): Promise<void> {
   const { error } = await supabase
     .from("training_requests")
-    .insert({ from_profile_id: fromProfileId, to_profile_id: toProfileId });
+    .insert({ from_profile_id: fromProfileId, to_profile_id: toProfileId, message: message?.trim() || null });
   if (error) throw error;
 }
 
@@ -28,7 +33,7 @@ export async function getRequestBetween(
 ): Promise<RequestListItem | null> {
   const { data, error } = await supabase
     .from("training_requests")
-    .select("id, status, created_at, from_profile_id, to_profile_id")
+    .select("id, status, created_at, from_profile_id, to_profile_id, message")
     .or(
       `and(from_profile_id.eq.${myProfileId},to_profile_id.eq.${otherProfileId}),and(from_profile_id.eq.${otherProfileId},to_profile_id.eq.${myProfileId})`
     )
@@ -43,6 +48,7 @@ export async function getRequestBetween(
     createdAt: data.created_at,
     direction: data.from_profile_id === myProfileId ? "outgoing" : "incoming",
     counterpartProfileId: data.from_profile_id === myProfileId ? data.to_profile_id : data.from_profile_id,
+    message: data.message,
   };
 }
 
@@ -51,12 +57,13 @@ export interface RequestDetail {
   status: RequestStatus;
   fromProfileId: string;
   toProfileId: string;
+  message: string | null;
 }
 
 export async function getRequestById(id: string): Promise<RequestDetail | null> {
   const { data, error } = await supabase
     .from("training_requests")
-    .select("id, status, from_profile_id, to_profile_id")
+    .select("id, status, from_profile_id, to_profile_id, message")
     .eq("id", id)
     .maybeSingle();
 
@@ -68,6 +75,7 @@ export async function getRequestById(id: string): Promise<RequestDetail | null> 
     status: data.status as RequestStatus,
     fromProfileId: data.from_profile_id,
     toProfileId: data.to_profile_id,
+    message: data.message,
   };
 }
 
@@ -85,7 +93,7 @@ export async function countPendingIncoming(myProfileId: string): Promise<number>
 export async function listMyRequests(myProfileId: string): Promise<RequestListItem[]> {
   const { data, error } = await supabase
     .from("training_requests")
-    .select("id, status, created_at, from_profile_id, to_profile_id")
+    .select("id, status, created_at, from_profile_id, to_profile_id, message")
     .or(`from_profile_id.eq.${myProfileId},to_profile_id.eq.${myProfileId}`)
     .order("created_at", { ascending: false });
 
@@ -97,5 +105,6 @@ export async function listMyRequests(myProfileId: string): Promise<RequestListIt
     createdAt: r.created_at,
     direction: r.from_profile_id === myProfileId ? ("outgoing" as const) : ("incoming" as const),
     counterpartProfileId: r.from_profile_id === myProfileId ? r.to_profile_id : r.from_profile_id,
+    message: r.message,
   }));
 }
