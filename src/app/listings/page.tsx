@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "@/lib/auth";
@@ -296,7 +297,16 @@ function ListingRow({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-      <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
+      <div className="relative h-24 w-full overflow-hidden">
+        <Image
+          src={style.image}
+          alt={post.sport}
+          fill
+          sizes="(max-width: 640px) 100vw, 640px"
+          className="object-cover"
+        />
+        <div className={`absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r ${style.accent}`} />
+      </div>
       <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-1.5">
           <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>

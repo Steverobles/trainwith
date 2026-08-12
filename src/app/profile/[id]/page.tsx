@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SafetyBanner from "@/components/SafetyBanner";
@@ -69,7 +70,16 @@ export default async function ProfileDetail({
                 const style = sportStyles[p.sport];
                 return (
                   <div key={p.id} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-                    <div className={`h-1 w-full bg-gradient-to-r ${style.accent}`} />
+                    <div className="relative h-24 w-full overflow-hidden">
+                      <Image
+                        src={style.image}
+                        alt={p.sport}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 640px"
+                        className="object-cover"
+                      />
+                      <div className={`absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r ${style.accent}`} />
+                    </div>
                     <div className="flex min-w-0 flex-wrap items-center gap-1.5 p-4">
                       <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}>
                         <span>{style.icon}</span>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { isMinorAgeBand } from "@/lib/types";
 import { PostWithProfile } from "@/lib/posts";
@@ -19,7 +20,16 @@ export default function PostCard({
       href={`/profile/${profile.id}`}
       className="group block overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
     >
-      <div className={`h-1.5 w-full bg-gradient-to-r ${style.accent}`} />
+      <div className="relative h-28 w-full overflow-hidden">
+        <Image
+          src={style.image}
+          alt={post.sport}
+          fill
+          sizes="(max-width: 640px) 100vw, 400px"
+          className="object-cover transition-transform duration-200 group-hover:scale-105"
+        />
+        <div className={`absolute inset-x-0 bottom-0 h-1.5 bg-gradient-to-r ${style.accent}`} />
+      </div>
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div className="relative shrink-0">
