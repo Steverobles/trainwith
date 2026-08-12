@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ageBandFromBirthYear, isMinorAgeBand } from "@/lib/types";
 import { signUpAndCreateProfile } from "@/lib/profiles";
+import AvailabilityPicker from "./AvailabilityPicker";
 
 const currentYear = new Date().getFullYear();
 const birthYears = Array.from({ length: 90 - 13 + 1 }, (_, i) => currentYear - 13 - i);
@@ -20,6 +21,7 @@ export default function SignupForm() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [bio, setBio] = useState("");
+  const [availability, setAvailability] = useState<string[]>([]);
   const [guardianName, setGuardianName] = useState("");
   const [guardianEmail, setGuardianEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -41,6 +43,7 @@ export default function SignupForm() {
         city,
         state,
         bio,
+        availability,
         guardianName: minor ? guardianName : undefined,
         guardianEmail: minor ? guardianEmail : undefined,
       });
@@ -171,6 +174,8 @@ export default function SignupForm() {
           placeholder="What sports do you play, and what are you working toward? e.g. Varsity pitcher trying to add velocity before fall ball."
         />
       </div>
+
+      <AvailabilityPicker value={availability} onChange={setAvailability} />
 
       {minor && (
         <div className="rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4">

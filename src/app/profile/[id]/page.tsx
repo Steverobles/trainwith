@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SafetyBanner from "@/components/SafetyBanner";
 import RequestButton from "@/components/RequestButton";
+import ReportBlockButton from "@/components/ReportBlockButton";
 import { getProfile } from "@/lib/profiles";
 import { listPostsByProfile } from "@/lib/posts";
 import { isMinorAgeBand } from "@/lib/types";
@@ -34,9 +35,15 @@ export default async function ProfileDetail({
           <div className="h-2 w-full bg-gradient-to-r from-blue-600 to-indigo-600" />
           <div className="p-6">
             <div className="flex items-start gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg font-semibold text-blue-700">
-                {profile.initials}
-              </div>
+              {profile.avatarUrl ? (
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full">
+                  <Image src={profile.avatarUrl} alt="" fill sizes="64px" className="object-cover" />
+                </div>
+              ) : (
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg font-semibold text-blue-700">
+                  {profile.initials}
+                </div>
+              )}
               <div className="min-w-0 flex-1">
                 <h1 className="text-xl font-bold tracking-tight text-gray-950">{profile.name}</h1>
                 <p className="text-sm text-gray-500">
@@ -56,7 +63,15 @@ export default async function ProfileDetail({
               <p className="mt-4 break-words text-sm leading-relaxed text-gray-700">{profile.bio}</p>
             )}
 
+            {profile.availability.length > 0 && (
+              <p className="mt-3 text-xs text-gray-500">🕐 {profile.availability.join(" · ")}</p>
+            )}
+
             <RequestButton toProfileId={profile.id} toProfileHasOwner={profile.userId !== null} />
+
+            <div className="mt-3">
+              <ReportBlockButton toProfileId={profile.id} />
+            </div>
           </div>
         </div>
 

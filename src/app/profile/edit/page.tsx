@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "@/lib/auth";
 import { getMyProfile, updateProfile } from "@/lib/profiles";
+import { ageBandFromBirthYear, isMinorAgeBand } from "@/lib/types";
+import AvailabilityPicker from "@/components/AvailabilityPicker";
+import AvatarUpload from "@/components/AvatarUpload";
 
 const currentYear = new Date().getFullYear();
 const birthYears = Array.from({ length: 90 - 13 + 1 }, (_, i) => currentYear - 13 - i);
@@ -23,6 +26,9 @@ export default function EditProfile() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [bio, setBio] = useState("");
+  const [availability, setAvailability] = useState<string[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [initials, setInitials] = useState("");
   const [originalCity, setOriginalCity] = useState("");
   const [originalState, setOriginalState] = useState("");
   const [ready, setReady] = useState(false);
@@ -43,6 +49,9 @@ export default function EditProfile() {
       setCity(profile.city);
       setState(profile.state);
       setBio(profile.bio);
+      setAvailability(profile.availability);
+      setAvatarUrl(profile.avatarUrl);
+      setInitials(profile.initials);
       setOriginalCity(profile.city);
       setOriginalState(profile.state);
       setReady(true);
@@ -56,7 +65,7 @@ export default function EditProfile() {
     setError(null);
     try {
       const regeocode = city !== originalCity || state !== originalState;
-      await updateProfile(profileId, { name, birthYear, city, state, bio, regeocode });
+      await updateProfile(profileId, { name, birthYear, city, state, bio, availability, regeocode });
       router.push(`/profile/${profileId}`);
       router.refresh();
     } catch (err) {
@@ -147,6 +156,21 @@ export default function EditProfile() {
                 placeholder="What sports do you play, and what are you working toward?"
               />
             </div>
+
+            <AvailabilityPicker value={availability} onChange={setAvailability} />
+
+            {isMinorAgeBand(ageBandFromBirthYear(birthYear)) ? (
+              <p className="rounded-xl bg-gray-50 px-3.5 py-2.5 text-xs text-gray-500">
+                Profile photos aren&apos;t available for accounts under 18.
+              </p>
+            ) : (
+              <AvatarUpload
+                profileId={profileId}
+                currentUrl={avatarUrl}
+                initials={initials}
+                onChange={setAvatarUrl}
+              />
+            )}
 
             {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 

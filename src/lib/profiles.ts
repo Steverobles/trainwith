@@ -3,7 +3,7 @@ import { geocodeCityState } from "./geocode";
 import { AgeBand, Profile, ageBandFromBirthYear } from "./types";
 
 const SELECT_COLUMNS =
-  "id, name, age_band, birth_year, city, state, lat, lng, bio, guardian_verified, user_id";
+  "id, name, age_band, birth_year, city, state, lat, lng, bio, guardian_verified, user_id, avatar_url, availability";
 
 export function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -24,6 +24,8 @@ interface ProfileRow {
   bio: string;
   guardian_verified: boolean;
   user_id: string | null;
+  avatar_url: string | null;
+  availability: string[] | null;
 }
 
 function rowToProfile(row: ProfileRow): Profile {
@@ -40,6 +42,8 @@ function rowToProfile(row: ProfileRow): Profile {
     initials: getInitials(row.name),
     guardianVerified: row.guardian_verified,
     userId: row.user_id,
+    avatarUrl: row.avatar_url,
+    availability: row.availability ?? [],
   };
 }
 
@@ -85,6 +89,7 @@ export async function signUpAndCreateProfile(input: {
   city: string;
   state: string;
   bio: string;
+  availability: string[];
   guardianName?: string;
   guardianEmail?: string;
 }): Promise<void> {
@@ -113,6 +118,7 @@ export async function signUpAndCreateProfile(input: {
       lat: coords?.lat ?? null,
       lng: coords?.lng ?? null,
       bio: input.bio,
+      availability: input.availability,
     })
     .select("id")
     .single();
@@ -145,6 +151,7 @@ export async function updateProfile(
     city: string;
     state: string;
     bio: string;
+    availability: string[];
     regeocode: boolean;
   }
 ): Promise<void> {
@@ -155,6 +162,7 @@ export async function updateProfile(
     city: input.city,
     state: input.state,
     bio: input.bio,
+    availability: input.availability,
   };
 
   if (input.regeocode) {
@@ -164,5 +172,33 @@ export async function updateProfile(
   }
 
   const { error } = await supabase.from("profiles").update(updates).eq("id", profileId);
+  if (error) throw error;
+}
+
+export async function uploadAvatar(file: File): Promise<string> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not signed in");
+
+  const ext = file.name.split(".").pop() || "jpg";
+  const path = `${user.id}/${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+  if (uploadError) throw uploadError;
+
+  const { data: publicUrlData } = supabase.storage.from("avatars").getPublicUrl(path);
+
+  const { error: updateError } = await supabase
+    .from("profiles")
+    .update({ avatar_url: publicUrlData.publicUrl })
+    .eq("user_id", user.id);
+  if (updateError) throw updateError;
+
+  return publicUrlData.publicUrl;
+}
+
+export async function removeAvatar(profileId: string): Promise<void> {
+  const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", profileId);
   if (error) throw error;
 }

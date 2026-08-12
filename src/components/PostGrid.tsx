@@ -8,6 +8,7 @@ import { getMyProfile } from "@/lib/profiles";
 import { PostWithProfile } from "@/lib/posts";
 import { milesBetween } from "@/lib/distance";
 import { getRequestsForProfiles, RequestListItem, RequestStatus } from "@/lib/requests";
+import { getMyBlockedProfileIds } from "@/lib/moderation";
 
 const distanceOptions = [
   { label: "Any distance", value: "" },
@@ -24,6 +25,7 @@ export default function PostGrid({ posts }: { posts: PostWithProfile[] }) {
   const [maxDistance, setMaxDistance] = useState("");
   const [requestsByProfile, setRequestsByProfile] = useState<Record<string, RequestListItem>>({});
   const [modalTarget, setModalTarget] = useState<PostWithProfile | null>(null);
+  const [blockedIds, setBlockedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (loading || !session) return;
@@ -32,12 +34,15 @@ export default function PostGrid({ posts }: { posts: PostWithProfile[] }) {
       if (profile?.lat != null && profile?.lng != null) {
         setMyCoords({ lat: profile.lat, lng: profile.lng });
       }
+      if (profile) {
+        getMyBlockedProfileIds(profile.id).then(setBlockedIds);
+      }
     });
   }, [session, loading]);
 
   const results = useMemo(() => {
     const withDistance = posts
-      .filter((p) => p.profile.id !== myProfileId)
+      .filter((p) => p.profile.id !== myProfileId && !blockedIds.includes(p.profile.id))
       .map((p) => ({
         post: p,
         distanceMiles:
@@ -59,7 +64,7 @@ export default function PostGrid({ posts }: { posts: PostWithProfile[] }) {
     }
 
     return filtered;
-  }, [posts, myProfileId, myCoords, maxDistance]);
+  }, [posts, myProfileId, myCoords, maxDistance, blockedIds]);
 
   const visibleProfileIds = useMemo(
     () => results.map((r) => r.post.profile.id).join(","),

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSession } from "@/lib/auth";
@@ -8,6 +9,7 @@ import { getMyProfile, getProfilesByIds } from "@/lib/profiles";
 import { getRequestById } from "@/lib/requests";
 import { listMessages, sendMessage, markMessagesRead, Message } from "@/lib/messages";
 import { Profile } from "@/lib/types";
+import ReportBlockButton from "@/components/ReportBlockButton";
 
 const POLL_MS = 4000;
 
@@ -145,20 +147,31 @@ export default function MessageThread() {
               <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 to-indigo-600" />
 
               {counterpart && (
-                <Link
-                  href={`/profile/${counterpart.id}`}
-                  className="flex items-center gap-3 border-b border-gray-100 p-4 transition-colors hover:bg-gray-50"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
-                    {counterpart.initials}
+                <div className="flex items-center justify-between gap-3 border-b border-gray-100 p-4">
+                  <Link
+                    href={`/profile/${counterpart.id}`}
+                    className="flex min-w-0 items-center gap-3 transition-colors hover:opacity-80"
+                  >
+                    {counterpart.avatarUrl ? (
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
+                        <Image src={counterpart.avatarUrl} alt="" fill sizes="40px" className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                        {counterpart.initials}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-gray-900">{counterpart.name}</p>
+                      <p className="text-xs text-gray-500">
+                        {counterpart.city}, {counterpart.state}
+                      </p>
+                    </div>
+                  </Link>
+                  <div className="shrink-0">
+                    <ReportBlockButton toProfileId={counterpart.id} />
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">{counterpart.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {counterpart.city}, {counterpart.state}
-                    </p>
-                  </div>
-                </Link>
+                </div>
               )}
 
               <div className="flex min-h-80 flex-1 flex-col gap-2 overflow-y-auto p-4">

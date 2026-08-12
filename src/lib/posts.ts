@@ -41,6 +41,8 @@ interface PostWithProfileRow extends PostRow {
     bio: string;
     guardian_verified: boolean;
     user_id: string | null;
+    avatar_url: string | null;
+    availability: string[] | null;
   };
 }
 
@@ -51,7 +53,7 @@ export async function listPostsWithProfiles(filters: {
   let query = supabase
     .from("training_posts")
     .select(
-      `${POST_COLUMNS}, profiles!inner (id, name, age_band, birth_year, city, state, lat, lng, bio, guardian_verified, user_id)`
+      `${POST_COLUMNS}, profiles!inner (id, name, age_band, birth_year, city, state, lat, lng, bio, guardian_verified, user_id, avatar_url, availability)`
     )
     .order("created_at", { ascending: false });
 
@@ -82,6 +84,8 @@ export async function listPostsWithProfiles(filters: {
       initials: getInitials(row.profiles.name),
       guardianVerified: row.profiles.guardian_verified,
       userId: row.profiles.user_id,
+      avatarUrl: row.profiles.avatar_url,
+      availability: row.profiles.availability ?? [],
     },
   }));
 }

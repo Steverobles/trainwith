@@ -40,11 +40,17 @@ export default function PostCard({
         <div className="p-4 pb-0">
           <div className="flex items-start gap-3">
             <div className="relative shrink-0">
-              <div
-                className={`flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
-              >
-                {profile.initials}
-              </div>
+              {profile.avatarUrl ? (
+                <div className="relative h-11 w-11 overflow-hidden rounded-full">
+                  <Image src={profile.avatarUrl} alt="" fill sizes="44px" className="object-cover" />
+                </div>
+              ) : (
+                <div
+                  className={`flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold ${style.avatar}`}
+                >
+                  {profile.initials}
+                </div>
+              )}
               <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-white text-[11px] shadow-sm">
                 {style.icon}
               </span>
@@ -78,6 +84,12 @@ export default function PostCard({
               {post.skillLevel}
             </span>
           </div>
+
+          {profile.availability.length > 0 && (
+            <p className="mt-2 truncate text-xs text-gray-400">
+              🕐 {profile.availability.join(" · ")}
+            </p>
+          )}
 
           {minor && (
             <p className="mt-3 text-xs font-medium text-amber-700">

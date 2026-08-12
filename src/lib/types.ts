@@ -18,6 +18,9 @@ export type Sport =
 
 export type SkillLevel = "Just starting" | "Rec / casual" | "Competitive" | "Varsity+";
 
+export const AVAILABILITY_OPTIONS = ["Weekday mornings", "Weekday evenings", "Weekends"] as const;
+export type Availability = (typeof AVAILABILITY_OPTIONS)[number];
+
 export const isMinorAgeBand = (band: AgeBand) => band === "13-15" || band === "16-17";
 
 export function ageBandFromBirthYear(birthYear: number, referenceYear = new Date().getFullYear()): AgeBand {
@@ -42,6 +45,8 @@ export interface Profile {
   initials: string;
   guardianVerified?: boolean; // only meaningful for minor age bands
   userId: string | null; // null for unclaimed seed/demo profiles
+  avatarUrl: string | null; // always null for minor age bands
+  availability: string[];
 }
 
 export interface TrainingPost {
