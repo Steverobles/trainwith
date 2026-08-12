@@ -126,6 +126,14 @@ export async function signUpAndCreateProfile(input: {
       guardian_email: input.guardianEmail,
     });
     if (guardianError) throw guardianError;
+
+    // Best-effort: the profile still exists if this fails, just without an
+    // approval email sent yet. Don't block signup on it.
+    fetch("/api/guardian/send-approval", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profileId: data.id }),
+    }).catch(() => {});
   }
 }
 
