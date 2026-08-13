@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import SafetyBanner from "@/components/SafetyBanner";
 import RequestButton from "@/components/RequestButton";
 import ReportBlockButton from "@/components/ReportBlockButton";
+import OwnPostActions from "@/components/OwnPostActions";
 import { getProfile } from "@/lib/profiles";
 import { listPostsByProfile } from "@/lib/posts";
 import { isMinorAgeBand } from "@/lib/types";
@@ -105,6 +106,7 @@ export default async function ProfileDetail({
                         {p.skillLevel}
                       </span>
                     </div>
+                    <OwnPostActions profileId={profile.id} postId={p.id} />
                   </div>
                 );
               })}
